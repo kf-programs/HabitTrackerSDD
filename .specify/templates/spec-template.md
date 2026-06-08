@@ -98,6 +98,17 @@
 - **FR-006**: System MUST authenticate users via [NEEDS CLARIFICATION: auth method not specified - email/password, SSO, OAuth?]
 - **FR-007**: System MUST retain user data for [NEEDS CLARIFICATION: retention period not specified]
 
+### Engineering Constraints *(mandatory)*
+
+- **EC-001**: Frontend implementation MUST use TypeScript + React with Vite.
+- **EC-002**: UI components MUST be functional components using Hooks; class components are prohibited.
+- **EC-003**: Components MUST remain modular with one component per file.
+- **EC-004**: Styling MUST use Tailwind CSS and include responsive behavior.
+- **EC-005**: New feature work MUST include Vitest + React Testing Library tests that cover core logic,
+  user interactions, and state updates.
+- **EC-006**: Delivery MUST pass automated lint and test checks before integration.
+- **EC-007**: Automation MUST NOT auto-commit code; commits are human-controlled.
+
 ### Key Entities *(include if feature involves data)*
 
 - **[Entity 1]**: [What it represents, key attributes without implementation]

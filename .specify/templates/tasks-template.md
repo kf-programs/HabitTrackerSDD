@@ -9,7 +9,7 @@ description: "Task list template for feature implementation"
 
 **Prerequisites**: plan.md (required), spec.md (required for user stories), research.md, data-model.md, contracts/
 
-**Tests**: The examples below include test tasks. Tests are OPTIONAL - only include them if explicitly requested in the feature specification.
+**Tests**: Tests are MANDATORY for every new feature. Include Vitest + React Testing Library tasks for each user story.
 
 **Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story.
 
@@ -21,10 +21,9 @@ description: "Task list template for feature implementation"
 
 ## Path Conventions
 
-- **Single project**: `src/`, `tests/` at repository root
-- **Web app**: `backend/src/`, `frontend/src/`
-- **Mobile**: `api/src/`, `ios/src/` or `android/src/`
-- Paths shown below assume single project - adjust based on plan.md structure
+- **React web app**: `src/components/`, `src/hooks/`, `src/pages/`, `src/services/`, `src/test/`
+- **Tests**: colocated `*.test.tsx` files or `src/test/` by feature area
+- Paths shown below assume a React frontend - adjust based on plan.md structure
 
 <!--
   ============================================================================
@@ -50,8 +49,10 @@ description: "Task list template for feature implementation"
 **Purpose**: Project initialization and basic structure
 
 - [ ] T001 Create project structure per implementation plan
-- [ ] T002 Initialize [language] project with [framework] dependencies
-- [ ] T003 [P] Configure linting and formatting tools
+- [ ] T002 Initialize React + Vite project dependencies
+- [ ] T003 [P] Configure ESLint and formatting tools
+- [ ] T004 Configure Tailwind CSS and responsive design tokens/utilities
+- [ ] T005 Configure CI workflow to run lint and tests before integration
 
 ---
 
@@ -63,12 +64,11 @@ description: "Task list template for feature implementation"
 
 Examples of foundational tasks (adjust based on your project):
 
-- [ ] T004 Setup database schema and migrations framework
-- [ ] T005 [P] Implement authentication/authorization framework
-- [ ] T006 [P] Setup API routing and middleware structure
-- [ ] T007 Create base models/entities that all stories depend on
-- [ ] T008 Configure error handling and logging infrastructure
-- [ ] T009 Setup environment configuration management
+- [ ] T006 Create shared app shell and routing structure
+- [ ] T007 [P] Setup state and data-access patterns with Hooks
+- [ ] T008 [P] Create reusable test utilities for React Testing Library
+- [ ] T009 Enforce one-component-per-file structure and naming conventions
+- [ ] T010 Setup environment configuration management
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
@@ -80,21 +80,20 @@ Examples of foundational tasks (adjust based on your project):
 
 **Independent Test**: [How to verify this story works on its own]
 
-### Tests for User Story 1 (OPTIONAL - only if tests requested) ⚠️
+### Tests for User Story 1 (MANDATORY) ⚠️
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T010 [P] [US1] Contract test for [endpoint] in tests/contract/test_[name].py
-- [ ] T011 [P] [US1] Integration test for [user journey] in tests/integration/test_[name].py
+- [ ] T011 [P] [US1] Unit/component test for [feature behavior] in src/[feature]/[name].test.tsx
+- [ ] T012 [P] [US1] Interaction/state-update test for [user journey] in src/[feature]/[name].test.tsx
 
 ### Implementation for User Story 1
 
-- [ ] T012 [P] [US1] Create [Entity1] model in src/models/[entity1].py
-- [ ] T013 [P] [US1] Create [Entity2] model in src/models/[entity2].py
-- [ ] T014 [US1] Implement [Service] in src/services/[service].py (depends on T012, T013)
-- [ ] T015 [US1] Implement [endpoint/feature] in src/[location]/[file].py
+- [ ] T013 [P] [US1] Create [FeatureComponent] in src/components/[FeatureComponent].tsx
+- [ ] T014 [P] [US1] Create [FeatureHook] in src/hooks/[featureHook].ts
+- [ ] T015 [US1] Implement [feature flow] in src/pages/[FeaturePage].tsx (depends on T013, T014)
 - [ ] T016 [US1] Add validation and error handling
-- [ ] T017 [US1] Add logging for user story 1 operations
+- [ ] T017 [US1] Add clear comments for complex logic only
 
 **Checkpoint**: At this point, User Story 1 should be fully functional and testable independently
 
@@ -106,16 +105,16 @@ Examples of foundational tasks (adjust based on your project):
 
 **Independent Test**: [How to verify this story works on its own]
 
-### Tests for User Story 2 (OPTIONAL - only if tests requested) ⚠️
+### Tests for User Story 2 (MANDATORY) ⚠️
 
-- [ ] T018 [P] [US2] Contract test for [endpoint] in tests/contract/test_[name].py
-- [ ] T019 [P] [US2] Integration test for [user journey] in tests/integration/test_[name].py
+- [ ] T018 [P] [US2] Unit/component test for [feature behavior] in src/[feature]/[name].test.tsx
+- [ ] T019 [P] [US2] Interaction/state-update test for [user journey] in src/[feature]/[name].test.tsx
 
 ### Implementation for User Story 2
 
-- [ ] T020 [P] [US2] Create [Entity] model in src/models/[entity].py
-- [ ] T021 [US2] Implement [Service] in src/services/[service].py
-- [ ] T022 [US2] Implement [endpoint/feature] in src/[location]/[file].py
+- [ ] T020 [P] [US2] Create [FeatureComponent] in src/components/[FeatureComponent].tsx
+- [ ] T021 [US2] Implement [feature hook/service] in src/hooks/[featureHook].ts
+- [ ] T022 [US2] Implement [feature flow] in src/pages/[FeaturePage].tsx
 - [ ] T023 [US2] Integrate with User Story 1 components (if needed)
 
 **Checkpoint**: At this point, User Stories 1 AND 2 should both work independently
@@ -128,16 +127,16 @@ Examples of foundational tasks (adjust based on your project):
 
 **Independent Test**: [How to verify this story works on its own]
 
-### Tests for User Story 3 (OPTIONAL - only if tests requested) ⚠️
+### Tests for User Story 3 (MANDATORY) ⚠️
 
-- [ ] T024 [P] [US3] Contract test for [endpoint] in tests/contract/test_[name].py
-- [ ] T025 [P] [US3] Integration test for [user journey] in tests/integration/test_[name].py
+- [ ] T024 [P] [US3] Unit/component test for [feature behavior] in src/[feature]/[name].test.tsx
+- [ ] T025 [P] [US3] Interaction/state-update test for [user journey] in src/[feature]/[name].test.tsx
 
 ### Implementation for User Story 3
 
-- [ ] T026 [P] [US3] Create [Entity] model in src/models/[entity].py
-- [ ] T027 [US3] Implement [Service] in src/services/[service].py
-- [ ] T028 [US3] Implement [endpoint/feature] in src/[location]/[file].py
+- [ ] T026 [P] [US3] Create [FeatureComponent] in src/components/[FeatureComponent].tsx
+- [ ] T027 [US3] Implement [feature hook/service] in src/hooks/[featureHook].ts
+- [ ] T028 [US3] Implement [feature flow] in src/pages/[FeaturePage].tsx
 
 **Checkpoint**: All user stories should now be independently functional
 
@@ -154,7 +153,7 @@ Examples of foundational tasks (adjust based on your project):
 - [ ] TXXX [P] Documentation updates in docs/
 - [ ] TXXX Code cleanup and refactoring
 - [ ] TXXX Performance optimization across all stories
-- [ ] TXXX [P] Additional unit tests (if requested) in tests/unit/
+- [ ] TXXX [P] Additional unit/component tests in src/test/ or feature-local *.test.tsx files
 - [ ] TXXX Security hardening
 - [ ] TXXX Run quickstart.md validation
 
@@ -179,7 +178,7 @@ Examples of foundational tasks (adjust based on your project):
 
 ### Within Each User Story
 
-- Tests (if included) MUST be written and FAIL before implementation
+- Tests MUST be written and FAIL before implementation
 - Models before services
 - Services before endpoints
 - Core implementation before integration
@@ -199,13 +198,13 @@ Examples of foundational tasks (adjust based on your project):
 ## Parallel Example: User Story 1
 
 ```bash
-# Launch all tests for User Story 1 together (if tests requested):
-Task: "Contract test for [endpoint] in tests/contract/test_[name].py"
-Task: "Integration test for [user journey] in tests/integration/test_[name].py"
+# Launch all tests for User Story 1 together:
+Task: "Unit/component test for [feature behavior] in src/[feature]/[name].test.tsx"
+Task: "Interaction/state-update test for [user journey] in src/[feature]/[name].test.tsx"
 
 # Launch all models for User Story 1 together:
-Task: "Create [Entity1] model in src/models/[entity1].py"
-Task: "Create [Entity2] model in src/models/[entity2].py"
+Task: "Create [FeatureComponent] in src/components/[FeatureComponent].tsx"
+Task: "Create [FeatureHook] in src/hooks/[featureHook].ts"
 ```
 
 ---

@@ -1,50 +1,94 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+Sync Impact Report
+- Version change: 1.0.0 -> 2.0.0
+- Modified principles:
+  - I. React + JavaScript + Vite Baseline -> I. React + TypeScript + Vite Baseline
+  - II. Functional Components and Hooks Only -> II. Functional Components and Hooks Only
+  - III. Tailwind-First Responsive UI -> III. Tailwind-First Responsive UI
+  - IV. Mandatory Automated Testing -> IV. Mandatory Automated Testing
+  - V. CI Quality Gates and Human-Controlled Commits -> V. CI Quality Gates and Human-Controlled Commits
+- Added sections:
+  - None
+- Removed sections:
+  - None
+- Templates requiring updates:
+  - ✅ .specify/templates/plan-template.md
+  - ✅ .specify/templates/spec-template.md
+  - ✅ .specify/templates/tasks-template.md
+  - ✅ .github/copilot-instructions.md
+  - ✅ .specify/templates/commands/*.md (no files present)
+- Follow-up TODOs:
+  - None
+-->
+
+# HabitTrackerSDD Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. React + TypeScript + Vite Baseline
+All frontend implementation MUST use TypeScript with React and Vite as the build tool.
+New frontend features or modules MUST NOT introduce alternative UI frameworks,
+or alternative build tools unless the constitution is amended first.
+Rationale: A single baseline reduces maintenance cost and prevents toolchain drift.
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+### II. Functional Components and Hooks Only
+React class components are prohibited. Components MUST be implemented as functional
+components using Hooks (for example `useState`, `useEffect`, `useMemo`, `useCallback`) where
+stateful or lifecycle behavior is required. Components MUST remain modular, with one component
+per file.
+Rationale: This enforces a consistent architecture and improves reuse, readability, and testing.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### III. Tailwind-First Responsive UI
+UI styling MUST use Tailwind CSS utility classes as the primary styling mechanism.
+Layouts MUST be responsive across mobile and desktop breakpoints, and custom CSS MUST be
+limited to cases where Tailwind utilities cannot reasonably express the requirement.
+Rationale: Utility-first styling accelerates delivery while keeping design behavior explicit.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### IV. Mandatory Automated Testing
+Every new feature MUST include automated unit and component tests using Vitest and
+React Testing Library. Tests MUST validate core logic, user interactions, and state updates,
+and they MUST be runnable in non-interactive CI environments.
+Rationale: Required test coverage protects behavior during rapid iteration and refactoring.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### V. CI Quality Gates and Human-Controlled Commits
+The repository MUST maintain an automated CI/CD pipeline that runs linting and tests before
+integration. Work that fails these checks MUST NOT be integrated. Automation and agents MUST
+NOT auto-commit code; changes remain local for human review, manual staging, and manual commit.
+Rationale: Quality gates prevent regressions, and manual commits preserve developer control.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+## Implementation Standards
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+- Comments MUST be concise and only explain non-obvious or complex logic.
+- File and folder conventions in plans and tasks MUST preserve one-component-per-file structure.
+- Any exception to the mandated stack or testing policy MUST be documented in the plan with
+	explicit approval before implementation starts.
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+## Delivery and Review Workflow
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+- Specifications MUST describe testable user scenarios and include acceptance criteria for
+	behavior and state transitions.
+- Plans MUST include a constitution compliance check before research and before implementation.
+- Tasks MUST include explicit lint and test execution work and identify files to be tested.
+- Pull requests and reviews MUST verify constitution compliance, passing CI, and adequate tests
+	for new behavior.
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+This constitution is the highest-priority engineering policy for this repository.
+All plans, specs, tasks, and implementation guidance MUST comply.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+Amendment process:
+1. Propose the amendment with impacted principles/sections and rationale.
+2. Review dependent templates and guidance docs for required sync updates.
+3. Approve and merge the amendment with a version bump justified by semantic versioning.
+
+Versioning policy:
+- MAJOR: Breaking governance changes or principle removals/redefinitions.
+- MINOR: New principles/sections or materially expanded mandatory guidance.
+- PATCH: Wording clarifications, typo fixes, and non-semantic refinements.
+
+Compliance review expectations:
+- Every implementation plan and pull request MUST include an explicit constitution check.
+- Non-compliance MUST be fixed before integration.
+
+**Version**: 2.0.0 | **Ratified**: 2026-06-07 | **Last Amended**: 2026-06-08
