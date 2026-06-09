@@ -3,6 +3,7 @@ import { BottomNavBar } from './BottomNavBar';
 import { DashboardView } from '../components/DashboardView';
 import { AllRoutinesView } from '../components/AllRoutinesView';
 import { RoutineWorkspace } from '../components/RoutineWorkspace';
+import { ImportRouteView } from '../components/ImportRouteView';
 import type { RoutineRecord } from '../db/schema';
 
 interface RouterProps {
@@ -17,6 +18,7 @@ export function Router({ routines }: RouterProps) {
           <Route path="/" element={<DashboardView routines={routines} />} />
           <Route path="/routines" element={<AllRoutinesView routines={routines} />} />
           <Route path="/routines/:routineId" element={<RoutineWorkspace />} />
+          <Route path="/import" element={<ImportRouteView />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>

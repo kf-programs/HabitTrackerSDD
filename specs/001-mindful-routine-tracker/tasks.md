@@ -104,17 +104,17 @@
 
 ### Tests for User Story 3 (MANDATORY) ⚠️
 
-- [ ] T030 [P] [US3] Add timeline service tests for 120-day daily windows, Sunday-start weekly periods, and history preservation in `src/test/services/timelineService.test.ts`
-- [ ] T031 [P] [US3] Add sharing and import tests for structure-only payloads, duplicate-title suffixes, and cancel/error behavior in `src/test/services/sharingService.test.ts`
-- [ ] T032 [P] [US3] Add import preview dialog tests for confirmation and rejection flows in `src/test/components/ImportPreviewDialog.test.tsx`
+- [X] T030 [P] [US3] Add timeline service tests for 120-day daily windows, Sunday-start weekly periods, and history preservation in `src/test/services/timelineService.test.ts`
+- [X] T031 [P] [US3] Add sharing and import tests for structure-only payloads, duplicate-title suffixes, and cancel/error behavior in `src/test/services/sharingService.test.ts`
+- [X] T032 [P] [US3] Add import preview dialog tests for confirmation and rejection flows in `src/test/components/ImportPreviewDialog.test.tsx`
 
 ### Implementation for User Story 3
 
 - [ ] T033 [P] [US3] Implement timeline computation and historical tile generation in `src/services/timelineService.ts` and `src/utils/dateBoundaries.ts`
 - [ ] T034 [P] [US3] Implement the parallel timeline UI in `src/components/ParallelTimelines.tsx`, `src/components/DailyGrid.tsx`, and `src/components/WeeklyRibbon.tsx`
 - [ ] T035 [P] [US3] Implement random pastel token selection and tile color assignment in `src/utils/pastelPalette.ts` and `src/services/timelineService.ts`
-- [ ] T036 [P] [US3] Implement share payload export and URL-safe compression in `src/services/sharingService.ts` and `src/utils/urlCodec.ts`
-- [ ] T037 [US3] Implement import route parsing, confirmation preview, and duplicate-title suffix handling in `src/components/ImportPreviewDialog.tsx` and `src/app/Router.tsx`
+- [X] T036 [P] [US3] Implement share payload export and URL-safe compression in `src/services/sharingService.ts` and `src/utils/urlCodec.ts`
+- [X] T037 [US3] Implement import route parsing, confirmation preview, and duplicate-title suffix handling in `src/components/ImportPreviewDialog.tsx` and `src/app/Router.tsx`
 - [ ] T038 [US3] Preserve historical tiles when habits are edited, archived, or deleted by updating `src/repositories/habitsRepository.ts` and `src/services/timelineService.ts`
 
 **Checkpoint**: All user stories should now be independently functional.
