@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "mindful-routine-share-payload.schema.json",
+  "title": "MindfulRoutineSharePayload",
+  "type": "object",
+  "required": ["version", "routine", "categories", "habits"],
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "routine": {
+      "type": "object",
+      "required": ["title", "status"],
+      "additionalProperties": false,
+      "properties": {
+        "title": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "description": { "type": "string", "maxLength": 1000 },
+        "status": { "type": "string", "enum": ["active", "paused"] }
+      }
+    },
+    "categories": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "orderIndex"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "name": { "type": "string", "minLength": 1, "maxLength": 80 },
+          "orderIndex": { "type": "integer", "minimum": 0 }
+        }
+      }
+    },
+    "habits": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "categoryId", "title", "timeframe", "trackingType"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "categoryId": { "type": "string", "minLength": 1 },
+          "title": { "type": "string", "minLength": 1, "maxLength": 120 },
+          "timeframe": { "type": "string", "enum": ["daily", "weekly"] },
+          "trackingType": { "type": "string", "enum": ["yesno", "counter", "measurement"] },
+          "measurementUnit": { "type": "string", "maxLength": 24 }
+        }
+      }
+    }
+  },
+  "not": {
+    "anyOf": [
+      { "required": ["entries"] },
+      { "required": ["timelineTiles"] },
+      { "required": ["history"] }
+    ]
+  }
+}
