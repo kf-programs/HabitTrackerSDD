@@ -6,5 +6,28 @@ export async function listEntriesForHabit(habitId: string) {
 }
 
 export async function saveEntry(entry: EntryRecord) {
-  await db.entries.put(entry);
+  try {
+    await db.entries.put(entry);
+  } catch (error) {
+    if (error instanceof DOMException && error.name === 'QuotaExceededError') {
+      throw new Error('Storage is full. Free some space and retry.');
+    }
+    throw error;
+  }
+}
+
+export async function getEntryForPeriod(habitId: string, periodKey: string) {
+  return db.entries.where('[habitId+periodKey]').equals([habitId, periodKey]).first();
+}
+
+export async function upsertEntry(input: Omit<EntryRecord, 'id' | 'recordedAt'>) {
+  const existing = await getEntryForPeriod(input.habitId, input.periodKey);
+  const entry: EntryRecord = {
+    ...input,
+    id: existing?.id || crypto.randomUUID(),
+    recordedAt: new Date().toISOString(),
+  };
+
+  await saveEntry(entry);
+  return entry;
 }

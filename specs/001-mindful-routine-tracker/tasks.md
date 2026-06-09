@@ -56,17 +56,17 @@
 
 > **NOTE: Write these tests FIRST, ensure they fail before implementation.**
 
-- [ ] T015 [P] [US1] Add repository CRUD tests for routine creation, category nesting, and habit persistence in `src/test/repositories/routinesRepository.test.ts`
-- [ ] T016 [P] [US1] Add workspace interaction tests for habit entry creation and measurement autosave in `src/test/components/RoutineWorkspace.test.tsx`
+- [X] T015 [P] [US1] Add repository CRUD tests for routine creation, category nesting, and habit persistence in `src/test/repositories/routinesRepository.test.ts`
+- [X] T016 [P] [US1] Add workspace interaction tests for habit entry creation and measurement autosave in `src/test/components/RoutineWorkspace.test.tsx`
 
 ### Implementation for User Story 1
 
-- [ ] T017 [P] [US1] Implement routine create/edit/delete flows in `src/repositories/routinesRepository.ts` and `src/components/RoutineWorkspace.tsx`
-- [ ] T018 [P] [US1] Implement category and habit creation/editing controls in `src/components/CategoryAccordion.tsx` and `src/components/HabitRow.tsx`
-- [ ] T019 [US1] Implement Yes/No and Counter entry interactions plus local write-through updates in `src/components/HabitRow.tsx` and `src/services/timelineService.ts`
-- [ ] T020 [US1] Implement measurement blur autosave and read-mode transition in `src/components/HabitRow.tsx`
-- [ ] T021 [US1] Wire live query-backed persistence for the routine workspace in `src/app/Router.tsx`, `src/app/AppShell.tsx`, and `src/components/RoutineWorkspace.tsx`
-- [ ] T048 [US1] Implement non-destructive storage-pressure handling, retry guidance, and user-safe error messaging in `src/repositories/entriesRepository.ts` and `src/components/HabitRow.tsx`
+- [X] T017 [P] [US1] Implement routine create/edit/delete flows in `src/repositories/routinesRepository.ts` and `src/components/RoutineWorkspace.tsx`
+- [X] T018 [P] [US1] Implement category and habit creation/editing controls in `src/components/CategoryAccordion.tsx` and `src/components/HabitRow.tsx`
+- [X] T019 [US1] Implement Yes/No and Counter entry interactions plus local write-through updates in `src/components/HabitRow.tsx` and `src/services/timelineService.ts`
+- [X] T020 [US1] Implement measurement blur autosave and read-mode transition in `src/components/HabitRow.tsx`
+- [X] T021 [US1] Wire live query-backed persistence for the routine workspace in `src/app/Router.tsx`, `src/app/AppShell.tsx`, and `src/components/RoutineWorkspace.tsx`
+- [X] T048 [US1] Implement non-destructive storage-pressure handling, retry guidance, and user-safe error messaging in `src/repositories/entriesRepository.ts` and `src/components/HabitRow.tsx`
 
 **Checkpoint**: User Story 1 should now be fully functional and testable independently.
 
@@ -80,17 +80,17 @@
 
 ### Tests for User Story 2 (MANDATORY) ⚠️
 
-- [ ] T022 [P] [US2] Add dashboard tests for greeting, recent routines, and empty state behavior in `src/test/components/DashboardView.test.tsx`
-- [ ] T023 [P] [US2] Add directory tests for active/paused segmentation and inline toggles in `src/test/components/AllRoutinesView.test.tsx`
-- [ ] T024 [P] [US2] Add navigation and accordion tests for bottom nav routing and default-open category behavior in `src/test/components/BottomNavBar.test.tsx` and `src/test/components/CategoryAccordion.test.tsx`
+- [X] T022 [P] [US2] Add dashboard tests for greeting, recent routines, and empty state behavior in `src/test/components/DashboardView.test.tsx`
+- [X] T023 [P] [US2] Add directory tests for active/paused segmentation and inline toggles in `src/test/components/AllRoutinesView.test.tsx`
+- [X] T024 [P] [US2] Add navigation and accordion tests for bottom nav routing and default-open category behavior in `src/test/components/BottomNavBar.test.tsx` and `src/test/components/CategoryAccordion.test.tsx`
 
 ### Implementation for User Story 2
 
-- [ ] T025 [P] [US2] Implement the Home dashboard with time-of-day greeting, recent active routines, and empty state in `src/components/DashboardView.tsx`
-- [ ] T026 [P] [US2] Implement the All Routines directory with active/paused sections and inline state toggles in `src/components/AllRoutinesView.tsx`
-- [ ] T027 [US2] Implement bottom navigation and view switching in `src/app/BottomNavBar.tsx` and `src/app/Router.tsx`
-- [ ] T028 [US2] Ensure the routine workspace opens the first category by default and keeps remaining categories collapsed in `src/components/CategoryAccordion.tsx`
-- [ ] T029 [US2] Connect Home and Directory views to live database queries in `src/app/AppShell.tsx` and `src/components/DashboardView.tsx`
+- [X] T025 [P] [US2] Implement the Home dashboard with time-of-day greeting, recent active routines, and empty state in `src/components/DashboardView.tsx`
+- [X] T026 [P] [US2] Implement the All Routines directory with active/paused sections and inline state toggles in `src/components/AllRoutinesView.tsx`
+- [X] T027 [US2] Implement bottom navigation and view switching in `src/app/BottomNavBar.tsx` and `src/app/Router.tsx`
+- [X] T028 [US2] Ensure the routine workspace opens the first category by default and keeps remaining categories collapsed in `src/components/CategoryAccordion.tsx`
+- [X] T029 [US2] Connect Home and Directory views to live database queries in `src/app/AppShell.tsx` and `src/components/DashboardView.tsx`
 
 **Checkpoint**: User Stories 1 and 2 should both work independently.
 

@@ -1,9 +1,18 @@
 import { Link } from 'react-router-dom';
+import type { RoutineRecord } from '../db/schema';
 
-export function DashboardView() {
+interface DashboardViewProps {
+  routines: RoutineRecord[];
+}
+
+export function DashboardView({ routines }: DashboardViewProps) {
   const now = new Date();
   const hour = now.getHours();
   const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+  const activeRoutines = routines.filter((routine) => routine.status === 'active');
+  const recentRoutines = [...activeRoutines]
+    .sort((a, b) => Date.parse(b.lastAccessedAt) - Date.parse(a.lastAccessedAt))
+    .slice(0, 3);
 
   return (
     <section className="space-y-6">
@@ -15,18 +24,36 @@ export function DashboardView() {
         </p>
       </header>
 
-      <div className="rounded-3xl border border-dashed border-ink/10 bg-white/60 p-6">
-        <h2 className="text-lg font-semibold">Create your first routine</h2>
-        <p className="mt-2 text-sm text-ink/65">
-          No routines yet. Begin with a gentle ritual that fits your day.
-        </p>
-        <Link
-          to="/routines"
-          className="mt-4 inline-flex rounded-full bg-ink px-4 py-2 text-sm font-medium text-paper"
-        >
-          Go to All Routines
-        </Link>
-      </div>
+      {recentRoutines.length === 0 ? (
+        <div className="rounded-3xl border border-dashed border-ink/10 bg-white/60 p-6">
+          <h2 className="text-lg font-semibold">Create your first routine</h2>
+          <p className="mt-2 text-sm text-ink/65">
+            No active routines yet. Begin with a gentle ritual that fits your day.
+          </p>
+          <Link
+            to="/routines"
+            className="mt-4 inline-flex rounded-full bg-ink px-4 py-2 text-sm font-medium text-paper"
+          >
+            Go to All Routines
+          </Link>
+        </div>
+      ) : (
+        <div className="rounded-3xl bg-white/80 p-6 shadow-soft">
+          <h2 className="text-lg font-semibold">Recent routines</h2>
+          <div className="mt-3 space-y-2">
+            {recentRoutines.map((routine) => (
+              <Link
+                key={routine.id}
+                to={`/routines/${routine.id}`}
+                className="flex items-center justify-between rounded-2xl bg-paper px-4 py-3 text-sm hover:bg-white"
+              >
+                <span className="font-medium">{routine.title}</span>
+                <span className="text-ink/55">Open</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
     </section>
   );
 }

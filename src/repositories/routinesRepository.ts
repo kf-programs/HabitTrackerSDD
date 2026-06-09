@@ -1,6 +1,25 @@
 import { db } from '../db/client';
 import type { RoutineRecord } from '../db/schema';
 
+function getNow() {
+  return new Date().toISOString();
+}
+
+export async function createRoutine(title: string, description?: string) {
+  const now = getNow();
+  const routine: RoutineRecord = {
+    id: crypto.randomUUID(),
+    title: title.trim(),
+    description: description?.trim() || undefined,
+    status: 'active',
+    createdAt: now,
+    updatedAt: now,
+    lastAccessedAt: now,
+  };
+  await db.routines.add(routine);
+  return routine;
+}
+
 export async function listRoutines() {
   return db.routines.orderBy('lastAccessedAt').reverse().toArray();
 }
@@ -11,6 +30,16 @@ export async function getRoutineById(id: string) {
 
 export async function saveRoutine(routine: RoutineRecord) {
   await db.routines.put(routine);
+}
+
+export async function updateRoutine(id: string, updates: Partial<Pick<RoutineRecord, 'title' | 'description' | 'status'>>) {
+  const now = getNow();
+  await db.routines.update(id, {
+    ...updates,
+    updatedAt: now,
+    lastAccessedAt: now,
+  });
+  return getRoutineById(id);
 }
 
 export async function deleteRoutine(id: string) {
