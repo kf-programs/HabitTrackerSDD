@@ -8,6 +8,16 @@
 
 **Input**: User description: "Privacy-first, offline-capable mindful routine tracker with serverless sharing and non-gamified visual progress fabric"
 
+## Clarifications
+
+### Session 2026-06-09
+
+- Q: For simultaneous edits to the same routine/habit from multiple browser tabs on the same device, what should happen? → A: Last-write-wins (newest save replaces older value).
+- Q: For Weekly + Yes/No habits, how should completion be counted within a week? → A: Single completion per week; first completion marks the week complete.
+- Q: If an imported routine has the same title as an existing local routine, what should happen? → A: Import as a new copy and auto-append a suffix (for example, "(Imported)").
+- Q: What should define the start of a week for weekly habits and the weekly ribbon? → A: Always Sunday (fixed global rule).
+- Q: When should a new day begin for daily habits and daily timeline tiles? → A: Device local midnight.
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Create and Track Mindful Routines (Priority: P1)
@@ -66,6 +76,11 @@ As a user, I can keep historical tracking intact even when habits change, and I 
 - If local storage is full or unavailable, the user receives a clear, non-technical error and data entry is not silently discarded.
 - If a share link payload is corrupted, oversized, or unsupported, import is rejected safely with a clear recovery message.
 - If random pastel selection produces poor contrast, the app substitutes an accessible pastel variant while preserving the soft visual style.
+- If the same routine or habit is edited in multiple tabs, the most recent save is applied (last-write-wins).
+- If a Weekly + Yes/No habit receives additional toggles after first completion in the same week, the week remains complete and does not increment further.
+- If an imported routine title duplicates an existing local title, the import is kept as a separate copy with an auto-generated suffix rather than overwriting existing data.
+- Weekly boundaries are fixed globally to Sunday-start weeks regardless of device locale.
+- Daily boundaries reset at device local midnight.
 
 ## Requirements *(mandatory)*
 
@@ -92,6 +107,11 @@ As a user, I can keep historical tracking intact even when habits change, and I 
 - **FR-019**: System MUST generate a share link that includes only routine structure (routine metadata, categories, habits) and excludes completion/history data.
 - **FR-020**: System MUST allow import from a valid share link by showing a confirmation preview and creating a new local copy on acceptance.
 - **FR-021**: System MUST reject invalid or unsupported import payloads without modifying existing user data.
+- **FR-022**: System MUST resolve same-device multi-tab concurrent edits using a last-write-wins policy based on the latest successful save timestamp.
+- **FR-023**: System MUST treat Weekly + Yes/No habits as single-completion-per-week; the first completion marks the week complete and additional same-week toggles do not create extra completions.
+- **FR-024**: System MUST handle imported routine title collisions by creating a new local copy and auto-appending a suffix to the imported title, without merge or overwrite of existing routines.
+- **FR-025**: System MUST compute weekly habits and weekly ribbon periods using a fixed Sunday-start week definition for all users and devices.
+- **FR-026**: System MUST compute daily habit periods and daily timeline tile boundaries using device local midnight.
 
 ### Engineering Constraints *(mandatory)*
 
