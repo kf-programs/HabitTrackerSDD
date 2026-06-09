@@ -109,13 +109,17 @@ export function HabitRow({
           <button
             type="button"
             onClick={async () => {
+              if (timeframe === 'weekly' && completed) {
+                return;
+              }
+
               const next = !completed;
               setCompleted(next);
               await saveValue(next);
             }}
             className={`rounded-full px-4 py-2 text-sm font-medium ${completed ? 'bg-sage' : 'bg-white'}`}
           >
-            {completed ? 'Done' : 'Mark complete'}
+            {completed ? (timeframe === 'weekly' ? 'Done this week' : 'Done') : 'Mark complete'}
           </button>
         ) : null}
 

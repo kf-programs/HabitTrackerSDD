@@ -1,5 +1,13 @@
+function pad(value: number) {
+  return value.toString().padStart(2, '0');
+}
+
+function formatLocalDate(date: Date) {
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+}
+
 export function getDayKey(date = new Date()) {
-  return date.toISOString().slice(0, 10);
+  return formatLocalDate(date);
 }
 
 export function getWeekKey(date = new Date()) {
@@ -7,7 +15,7 @@ export function getWeekKey(date = new Date()) {
   const day = local.getDay();
   const diffToSunday = day;
   local.setDate(local.getDate() - diffToSunday);
-  return `${local.toISOString().slice(0, 10)}-SUN`;
+  return `${formatLocalDate(local)}-SUN`;
 }
 
 export function getRollingDayKeys(count: number, today = new Date()) {
@@ -19,6 +27,20 @@ export function getRollingDayKeys(count: number, today = new Date()) {
     const day = new Date(cursor);
     day.setDate(cursor.getDate() - index);
     keys.push(getDayKey(day));
+  }
+
+  return keys;
+}
+
+export function getRollingWeekKeys(count: number, today = new Date()) {
+  const keys: string[] = [];
+  const cursor = new Date(today);
+  cursor.setHours(0, 0, 0, 0);
+
+  for (let index = count - 1; index >= 0; index -= 1) {
+    const weekDate = new Date(cursor);
+    weekDate.setDate(cursor.getDate() - index * 7);
+    keys.push(getWeekKey(weekDate));
   }
 
   return keys;

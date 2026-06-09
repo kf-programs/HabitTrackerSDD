@@ -22,6 +22,11 @@ export async function getEntryForPeriod(habitId: string, periodKey: string) {
 
 export async function upsertEntry(input: Omit<EntryRecord, 'id' | 'recordedAt'>) {
   const existing = await getEntryForPeriod(input.habitId, input.periodKey);
+
+  if (input.timeframe === 'weekly' && input.valueType === 'boolean' && existing?.boolValue === true) {
+    return existing;
+  }
+
   const entry: EntryRecord = {
     ...input,
     id: existing?.id || crypto.randomUUID(),

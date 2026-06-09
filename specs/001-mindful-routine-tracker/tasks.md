@@ -110,12 +110,12 @@
 
 ### Implementation for User Story 3
 
-- [ ] T033 [P] [US3] Implement timeline computation and historical tile generation in `src/services/timelineService.ts` and `src/utils/dateBoundaries.ts`
-- [ ] T034 [P] [US3] Implement the parallel timeline UI in `src/components/ParallelTimelines.tsx`, `src/components/DailyGrid.tsx`, and `src/components/WeeklyRibbon.tsx`
-- [ ] T035 [P] [US3] Implement random pastel token selection and tile color assignment in `src/utils/pastelPalette.ts` and `src/services/timelineService.ts`
+- [X] T033 [P] [US3] Implement timeline computation and historical tile generation in `src/services/timelineService.ts` and `src/utils/dateBoundaries.ts`
+- [X] T034 [P] [US3] Implement the parallel timeline UI in `src/components/ParallelTimelines.tsx`, `src/components/DailyGrid.tsx`, and `src/components/WeeklyRibbon.tsx`
+- [X] T035 [P] [US3] Implement random pastel token selection and tile color assignment in `src/utils/pastelPalette.ts` and `src/services/timelineService.ts`
 - [X] T036 [P] [US3] Implement share payload export and URL-safe compression in `src/services/sharingService.ts` and `src/utils/urlCodec.ts`
 - [X] T037 [US3] Implement import route parsing, confirmation preview, and duplicate-title suffix handling in `src/components/ImportPreviewDialog.tsx` and `src/app/Router.tsx`
-- [ ] T038 [US3] Preserve historical tiles when habits are edited, archived, or deleted by updating `src/repositories/habitsRepository.ts` and `src/services/timelineService.ts`
+- [X] T038 [US3] Preserve historical tiles when habits are edited, archived, or deleted by updating `src/repositories/habitsRepository.ts` and `src/services/timelineService.ts`
 
 **Checkpoint**: All user stories should now be independently functional.
 

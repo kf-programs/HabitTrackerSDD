@@ -19,6 +19,25 @@ const PALETTE = [
 
 export type PastelToken = (typeof PALETTE)[number];
 
+const tokenClasses: Record<PastelToken, string> = {
+  'blush-1': 'bg-blush/80',
+  'blush-2': 'bg-blush/60',
+  'sage-1': 'bg-sage/80',
+  'sage-2': 'bg-sage/60',
+  'mist-1': 'bg-mist/80',
+  'mist-2': 'bg-mist/50',
+  'butter-1': 'bg-butter/80',
+  'butter-2': 'bg-butter/60',
+  'peach-1': 'bg-blush/70',
+  'peach-2': 'bg-blush/50',
+  'lavender-1': 'bg-mist/70',
+  'lavender-2': 'bg-mist/60',
+  'mint-1': 'bg-sage/70',
+  'mint-2': 'bg-sage/55',
+  'sky-1': 'bg-mist/75',
+  'sky-2': 'bg-mist/65',
+};
+
 export function getApprovedPastelPalette() {
   return [...PALETTE];
 }
@@ -34,4 +53,8 @@ export function pickPastelToken(seed?: string): PastelToken {
   }
 
   return PALETTE[hash % PALETTE.length];
+}
+
+export function getPastelClassName(token: PastelToken) {
+  return tokenClasses[token];
 }

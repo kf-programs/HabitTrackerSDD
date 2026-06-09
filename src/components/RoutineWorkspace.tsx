@@ -149,7 +149,7 @@ export function RoutineWorkspace() {
         </div>
       </header>
 
-      <ParallelTimelines />
+      <ParallelTimelines routineId={activeRoutineId} />
       {categories.map((category, index) => (
         <CategoryAccordion
           key={category.id}

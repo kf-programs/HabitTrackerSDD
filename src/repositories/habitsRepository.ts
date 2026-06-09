@@ -39,5 +39,9 @@ export async function listHabitsForRoutine(routineId: string) {
 }
 
 export async function archiveHabit(habitId: string) {
-  await db.habits.update(habitId, { status: 'archived' });
+  await updateHabit(habitId, { status: 'archived' });
+}
+
+export async function deleteHabit(habitId: string) {
+  await updateHabit(habitId, { status: 'deleted' });
 }
