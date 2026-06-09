@@ -69,6 +69,7 @@ specs/001-mindful-routine-tracker/
 
 ```text
 src/
+├── main.tsx
 ├── app/
 │   ├── AppShell.tsx
 │   ├── Router.tsx

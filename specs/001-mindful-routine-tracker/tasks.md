@@ -66,6 +66,7 @@
 - [ ] T019 [US1] Implement Yes/No and Counter entry interactions plus local write-through updates in `src/components/HabitRow.tsx` and `src/services/timelineService.ts`
 - [ ] T020 [US1] Implement measurement blur autosave and read-mode transition in `src/components/HabitRow.tsx`
 - [ ] T021 [US1] Wire live query-backed persistence for the routine workspace in `src/app/Router.tsx`, `src/app/AppShell.tsx`, and `src/components/RoutineWorkspace.tsx`
+- [ ] T048 [US1] Implement non-destructive storage-pressure handling, retry guidance, and user-safe error messaging in `src/repositories/entriesRepository.ts` and `src/components/HabitRow.tsx`
 
 **Checkpoint**: User Story 1 should now be fully functional and testable independently.
 
@@ -125,8 +126,10 @@
 **Purpose**: Offline installability, service worker caching, and app manifest completeness.
 
 - [ ] T039 [P] Configure the Vite PWA plugin, manifest, and icon references in `vite.config.ts`, `public/manifest.webmanifest`, and `public/icons/`
-- [ ] T040 [P] Register the service worker and offline startup behavior in `src/main.tsx` and `src/app/AppShell.tsx`
+- [ ] T040 [P] Register the service worker, app bootstrap, and offline startup behavior in `src/main.tsx` and `src/app/AppShell.tsx`
 - [ ] T041 [P] Add offline caching and fallback behavior validation in `src/test/components/AppShell.test.tsx` and `src/test/services/offlineCache.test.ts`
+- [ ] T042 [P] Add storage-full and unavailable-write failure tests for non-destructive retry behavior in `src/test/repositories/entriesRepository.test.ts`
+- [ ] T043 [P] Add palette membership and contrast-threshold tests for the approved pastel set in `src/test/services/timelineService.test.ts`
 
 ---
 
@@ -134,10 +137,10 @@
 
 **Purpose**: Final quality, accessibility, and documentation polish across stories.
 
-- [ ] T042 [P] Refine Tailwind spacing, responsive layouts, and soft pastel styling in `src/index.css` and `src/components/*.tsx`
-- [ ] T043 [P] Add accessibility labels, focus states, and reduced-motion handling in `src/components/*.tsx` and `src/app/BottomNavBar.tsx`
-- [ ] T044 Validate the quickstart and README usage flow in `specs/001-mindful-routine-tracker/quickstart.md` and `README.md`
-- [ ] T045 Run lint, unit tests, and component tests, then fix any failures in `package.json` and `src/**`
+- [ ] T044 [P] Refine Tailwind spacing, responsive layouts, and soft pastel styling in `src/index.css` and `src/components/*.tsx`
+- [ ] T045 [P] Add accessibility labels, focus states, and reduced-motion handling in `src/components/*.tsx` and `src/app/BottomNavBar.tsx`
+- [ ] T046 Validate the quickstart and README usage flow in `specs/001-mindful-routine-tracker/quickstart.md` and `README.md`
+- [ ] T047 Run lint, unit tests, and component tests, then fix any failures in `package.json` and `src/**`
 
 ---
 
