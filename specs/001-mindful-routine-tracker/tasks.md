@@ -18,11 +18,11 @@
 
 **Purpose**: Initialize the TypeScript React app shell, tooling, and baseline file structure.
 
-- [ ] T001 Initialize the Vite + React + TypeScript project scaffold in `package.json`, `tsconfig.json`, `tsconfig.app.json`, `vite.config.ts`, and `index.html`
-- [ ] T002 Configure Tailwind CSS and global app styles in `tailwind.config.ts`, `postcss.config.js`, and `src/index.css`
-- [ ] T003 [P] Add lint, test, and build scripts plus Vitest setup in `package.json`, `vitest.config.ts`, and `src/test/setup.ts`
-- [ ] T004 [P] Add PWA manifest and icon asset placeholders in `public/manifest.webmanifest` and `public/icons/`
-- [ ] T005 Create the core source folder layout in `src/app/`, `src/db/`, `src/repositories/`, `src/services/`, `src/utils/`, `src/components/`, and `src/test/`
+- [X] T001 Initialize the Vite + React + TypeScript project scaffold in `package.json`, `tsconfig.json`, `tsconfig.app.json`, `vite.config.ts`, and `index.html`
+- [X] T002 Configure Tailwind CSS and global app styles in `tailwind.config.ts`, `postcss.config.js`, and `src/index.css`
+- [X] T003 [P] Add lint, test, and build scripts plus Vitest setup in `package.json`, `vitest.config.ts`, and `src/test/setup.ts`
+- [X] T004 [P] Add PWA manifest and icon asset placeholders in `public/manifest.webmanifest` and `public/icons/`
+- [X] T005 Create the core source folder layout in `src/app/`, `src/db/`, `src/repositories/`, `src/services/`, `src/utils/`, `src/components/`, and `src/test/`
 
 ---
 
@@ -32,15 +32,15 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete.
 
-- [ ] T006 Implement the Dexie database client and versioned schema in `src/db/client.ts` and `src/db/schema.ts`
-- [ ] T007 [P] Add initial seed data for routines, categories, habits, and entries in `src/db/seed.ts`
-- [ ] T008 [P] Implement date boundary helpers for device-local day reset and Sunday-start weeks in `src/utils/dateBoundaries.ts`
-- [ ] T009 [P] Implement the approved pastel palette and token lookup utilities in `src/utils/pastelPalette.ts`
-- [ ] T010 [P] Implement the standalone URL codec utility for share payload compression/expansion in `src/utils/urlCodec.ts`
-- [ ] T011 Implement repository CRUD entry points for routines, categories, habits, and entries in `src/repositories/routinesRepository.ts`, `src/repositories/categoriesRepository.ts`, `src/repositories/habitsRepository.ts`, and `src/repositories/entriesRepository.ts`
-- [ ] T012 [P] Implement shared service shells for timeline computation and sharing flow in `src/services/timelineService.ts` and `src/services/sharingService.ts`
-- [ ] T013 Build the app shell, router, and persistent bottom navigation in `src/app/AppShell.tsx`, `src/app/Router.tsx`, and `src/app/BottomNavBar.tsx`
-- [ ] T014 [P] Add shared test utilities and render helpers in `src/test/utils.ts` and `src/test/setup.ts`
+- [X] T006 Implement the Dexie database client and versioned schema in `src/db/client.ts` and `src/db/schema.ts`
+- [X] T007 [P] Add initial seed data for routines, categories, habits, and entries in `src/db/seed.ts`
+- [X] T008 [P] Implement date boundary helpers for device-local day reset and Sunday-start weeks in `src/utils/dateBoundaries.ts`
+- [X] T009 [P] Implement the approved pastel palette and token lookup utilities in `src/utils/pastelPalette.ts`
+- [X] T010 [P] Implement the standalone URL codec utility for share payload compression/expansion in `src/utils/urlCodec.ts`
+- [X] T011 Implement repository CRUD entry points for routines, categories, habits, and entries in `src/repositories/routinesRepository.ts`, `src/repositories/categoriesRepository.ts`, `src/repositories/habitsRepository.ts`, and `src/repositories/entriesRepository.ts`
+- [X] T012 [P] Implement shared service shells for timeline computation and sharing flow in `src/services/timelineService.ts` and `src/services/sharingService.ts`
+- [X] T013 Build the app shell, router, and persistent bottom navigation in `src/app/AppShell.tsx`, `src/app/Router.tsx`, and `src/app/BottomNavBar.tsx`
+- [X] T014 [P] Add shared test utilities and render helpers in `src/test/utils.ts` and `src/test/setup.ts`
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel.
 

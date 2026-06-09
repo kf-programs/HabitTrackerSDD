@@ -1,0 +1,9 @@
+{
+  "name": "Mindful Routine Tracker",
+  "short_name": "Mindful Routines",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#f8f6f1",
+  "theme_color": "#f8f6f1",
+  "icons": []
+}
