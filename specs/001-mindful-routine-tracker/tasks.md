@@ -125,11 +125,11 @@
 
 **Purpose**: Offline installability, service worker caching, and app manifest completeness.
 
-- [ ] T039 [P] Configure the Vite PWA plugin, manifest, and icon references in `vite.config.ts`, `public/manifest.webmanifest`, and `public/icons/`
-- [ ] T040 [P] Register the service worker, app bootstrap, and offline startup behavior in `src/main.tsx` and `src/app/AppShell.tsx`
-- [ ] T041 [P] Add offline caching and fallback behavior validation in `src/test/components/AppShell.test.tsx` and `src/test/services/offlineCache.test.ts`
-- [ ] T042 [P] Add storage-full and unavailable-write failure tests for non-destructive retry behavior in `src/test/repositories/entriesRepository.test.ts`
-- [ ] T043 [P] Add palette membership and contrast-threshold tests for the approved pastel set in `src/test/services/timelineService.test.ts`
+- [X] T039 [P] Configure the Vite PWA plugin, manifest, and icon references in `vite.config.ts`, `public/manifest.webmanifest`, and `public/icons/`
+- [X] T040 [P] Register the service worker, app bootstrap, and offline startup behavior in `src/main.tsx` and `src/app/AppShell.tsx`
+- [X] T041 [P] Add offline caching and fallback behavior validation in `src/test/components/AppShell.test.tsx` and `src/test/services/offlineCache.test.ts`
+- [X] T042 [P] Add storage-full and unavailable-write failure tests for non-destructive retry behavior in `src/test/repositories/entriesRepository.test.ts`
+- [X] T043 [P] Add palette membership and contrast-threshold tests for the approved pastel set in `src/test/services/timelineService.test.ts`
 
 ---
 
@@ -137,10 +137,10 @@
 
 **Purpose**: Final quality, accessibility, and documentation polish across stories.
 
-- [ ] T044 [P] Refine Tailwind spacing, responsive layouts, and soft pastel styling in `src/index.css` and `src/components/*.tsx`
-- [ ] T045 [P] Add accessibility labels, focus states, and reduced-motion handling in `src/components/*.tsx` and `src/app/BottomNavBar.tsx`
-- [ ] T046 Validate the quickstart and README usage flow in `specs/001-mindful-routine-tracker/quickstart.md` and `README.md`
-- [ ] T047 Run lint, unit tests, and component tests, then fix any failures in `package.json` and `src/**`
+- [X] T044 [P] Refine Tailwind spacing, responsive layouts, and soft pastel styling in `src/index.css` and `src/components/*.tsx`
+- [X] T045 [P] Add accessibility labels, focus states, and reduced-motion handling in `src/components/*.tsx` and `src/app/BottomNavBar.tsx`
+- [X] T046 Validate the quickstart and README usage flow in `specs/001-mindful-routine-tracker/quickstart.md` and `README.md`
+- [X] T047 Run lint, unit tests, and component tests, then fix any failures in `package.json` and `src/**`
 
 ---
 

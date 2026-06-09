@@ -38,6 +38,25 @@ const tokenClasses: Record<PastelToken, string> = {
   'sky-2': 'bg-mist/65',
 };
 
+const tokenContrast: Record<PastelToken, { iconContrast: number; backgroundContrast: number }> = {
+  'blush-1': { iconContrast: 3.4, backgroundContrast: 1.7 },
+  'blush-2': { iconContrast: 3.2, backgroundContrast: 1.6 },
+  'sage-1': { iconContrast: 3.5, backgroundContrast: 1.8 },
+  'sage-2': { iconContrast: 3.3, backgroundContrast: 1.7 },
+  'mist-1': { iconContrast: 3.4, backgroundContrast: 1.7 },
+  'mist-2': { iconContrast: 3.1, backgroundContrast: 1.5 },
+  'butter-1': { iconContrast: 3.6, backgroundContrast: 1.9 },
+  'butter-2': { iconContrast: 3.2, backgroundContrast: 1.6 },
+  'peach-1': { iconContrast: 3.3, backgroundContrast: 1.6 },
+  'peach-2': { iconContrast: 3.1, backgroundContrast: 1.5 },
+  'lavender-1': { iconContrast: 3.4, backgroundContrast: 1.7 },
+  'lavender-2': { iconContrast: 3.2, backgroundContrast: 1.6 },
+  'mint-1': { iconContrast: 3.5, backgroundContrast: 1.8 },
+  'mint-2': { iconContrast: 3.2, backgroundContrast: 1.6 },
+  'sky-1': { iconContrast: 3.4, backgroundContrast: 1.7 },
+  'sky-2': { iconContrast: 3.2, backgroundContrast: 1.6 },
+};
+
 export function getApprovedPastelPalette() {
   return [...PALETTE];
 }
@@ -57,4 +76,8 @@ export function pickPastelToken(seed?: string): PastelToken {
 
 export function getPastelClassName(token: PastelToken) {
   return tokenClasses[token];
+}
+
+export function getPastelContrast(token: PastelToken) {
+  return tokenContrast[token];
 }

@@ -9,8 +9,12 @@ export async function saveEntry(entry: EntryRecord) {
   try {
     await db.entries.put(entry);
   } catch (error) {
-    if (error instanceof DOMException && error.name === 'QuotaExceededError') {
-      throw new Error('Storage is full. Free some space and retry.');
+    if (error instanceof DOMException) {
+      if (error.name === 'QuotaExceededError') {
+        throw new Error('Storage is full. Free some space and retry.');
+      }
+
+      throw new Error('Storage is unavailable right now. Check browser settings and retry.');
     }
     throw error;
   }

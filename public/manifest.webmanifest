@@ -1,9 +1,21 @@
 {
   "name": "Mindful Routine Tracker",
   "short_name": "Mindful Routines",
-  "start_url": ".",
+  "description": "Privacy-first mindful routine tracker with calm local-first tracking.",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#f8f6f1",
   "theme_color": "#f8f6f1",
-  "icons": []
+  "icons": [
+    {
+      "src": "/icons/icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/icons/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ]
 }

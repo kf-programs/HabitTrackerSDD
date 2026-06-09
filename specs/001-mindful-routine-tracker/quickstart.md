@@ -26,7 +26,7 @@ npm run lint
 
 ## Validate CI Gate Locally
 ```bash
-npm run lint && npm run test
+npm run lint && npm run test -- --run && npm run build
 ```
 
 ## Implementation Sequence
@@ -44,3 +44,4 @@ npm run lint && npm run test
 4. Edit/archive/delete habits and verify historical tiles remain unchanged.
 5. Export routine and confirm shared link omits historical logs.
 6. Open import link, confirm preview, import copy, and verify duplicate-title suffix behavior.
+7. Build production output and verify generated PWA artifacts (`dist/sw.js`, `dist/manifest.webmanifest`).

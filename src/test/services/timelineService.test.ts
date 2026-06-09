@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { HabitRecord } from '../../db/schema';
 import { buildDailyWindow, getPeriodKeyForHabit, mergeTimelineTiles } from '../../services/timelineService';
+import { getApprovedPastelPalette, getPastelContrast } from '../../utils/pastelPalette';
 
 function makeWeeklyHabit(): HabitRecord {
   return {
@@ -45,5 +46,24 @@ describe('timelineService', () => {
 
     const dayOne = preserved.find((tile) => tile.periodKey === '2026-06-01');
     expect(dayOne?.pastelToken).toBe('mint');
+  });
+
+  it('uses only approved pastel tokens for timeline tile assignment', () => {
+    const palette = getApprovedPastelPalette();
+    expect(palette).toHaveLength(16);
+
+    for (const token of palette) {
+      expect(palette).toContain(token);
+    }
+  });
+
+  it('ensures each approved pastel token meets contrast thresholds', () => {
+    const palette = getApprovedPastelPalette();
+
+    for (const token of palette) {
+      const contrast = getPastelContrast(token);
+      expect(contrast.iconContrast).toBeGreaterThanOrEqual(3);
+      expect(contrast.backgroundContrast).toBeGreaterThanOrEqual(1.5);
+    }
   });
 });

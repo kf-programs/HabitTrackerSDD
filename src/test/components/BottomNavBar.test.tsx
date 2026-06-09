@@ -18,7 +18,7 @@ describe('BottomNavBar', () => {
     );
 
     expect(screen.getByText('Home View')).toBeInTheDocument();
-    fireEvent.click(screen.getByRole('link', { name: 'All Routines' }));
+    fireEvent.click(screen.getByRole('link', { name: 'All routines view' }));
     expect(screen.getByText('All Routines View')).toBeInTheDocument();
   });
 });

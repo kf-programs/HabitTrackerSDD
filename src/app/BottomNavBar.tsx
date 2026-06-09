@@ -8,12 +8,12 @@ const linkClass = ({ isActive }: { isActive: boolean }) =>
 
 export function BottomNavBar() {
   return (
-    <nav className="fixed inset-x-0 bottom-0 border-t border-black/5 bg-paper/95 backdrop-blur">
+    <nav aria-label="Primary" className="fixed inset-x-0 bottom-0 border-t border-black/5 bg-paper/95 backdrop-blur">
       <div className="mx-auto flex w-full max-w-6xl items-center justify-center gap-3 px-4 py-3 sm:px-6 lg:px-8">
-        <NavLink to="/" className={linkClass} end>
+        <NavLink to="/" className={linkClass} aria-label="Home view" end>
           Home
         </NavLink>
-        <NavLink to="/routines" className={linkClass}>
+        <NavLink to="/routines" className={linkClass} aria-label="All routines view">
           All Routines
         </NavLink>
       </div>
