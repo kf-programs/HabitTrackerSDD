@@ -96,9 +96,9 @@ As a user, I can keep historical tracking intact even when habits change, and I 
 - **FR-008**: System MUST provide a Home Dashboard with time-of-day greeting, up to three most recently accessed active routines, empty state guidance, and persistent bottom navigation.
 - **FR-009**: System MUST provide a Routine Directory with active routines listed before paused routines and in-place active/paused toggles.
 - **FR-010**: System MUST provide a Routine Workspace with collapsible routine description and category accordion behavior where the first category is open by default.
-- **FR-011**: System MUST render a daily timeline grid only when at least one daily habit exists in the routine.
+- **FR-011**: System MUST render a daily timeline grid only when at least one daily habit exists in the routine, and the grid MUST show a rolling window of the most recent 120 calendar days (including today, based on device local date).
 - **FR-012**: System MUST render a weekly ribbon only when at least one weekly habit exists in the routine.
-- **FR-013**: System MUST assign a random soft pastel color to a day tile when any daily habit is completed for that day.
+- **FR-013**: System MUST assign a random soft pastel color to a day tile when any daily habit is completed for that day, selecting from a predefined approved pastel palette of 16 colors where each color provides at least 3:1 contrast against the completion indicator/icon and at least 1.5:1 contrast against the default tile background.
 - **FR-014**: System MUST light the weekly block on the day a weekly habit is checked complete.
 - **FR-015**: System MUST support Yes/No interaction by tap-to-complete with completed visual state and subtle strike-through text.
 - **FR-016**: System MUST support Counter interaction with increment and decrement controls and visible current count.
