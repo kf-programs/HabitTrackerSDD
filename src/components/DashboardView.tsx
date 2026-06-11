@@ -21,10 +21,9 @@ export function DashboardView({ routines }: DashboardViewProps) {
 
   return (
     <section className="space-y-6">
-      <header className="rounded-3xl bg-white/75 p-6 shadow-soft backdrop-blur">
-        <p className="text-sm font-medium uppercase tracking-[0.25em] text-ink/50">Home</p>
+      <header className="md:mt-40 text-center">
         <h1 className="mt-3 text-3xl font-semibold tracking-tight">{greeting}</h1>
-        <p className="mt-3 max-w-xl text-sm leading-6 text-ink/70">
+        <p className="mt-3 text-sm leading-6 text-ink/70">
           A calm place to return to your routines without streak pressure or noise.
         </p>
       </header>
@@ -47,7 +46,7 @@ export function DashboardView({ routines }: DashboardViewProps) {
         </div>
       )}
 
-      <div className={`rounded-3xl p-6 ${recentRoutines.length === 0 ? 'border border-dashed border-ink/10 bg-white/60' : ''}`}>
+      <div className={`rounded-3xl p-6 border border-dashed border-ink/10 bg-white/60`}>
         <h2 className="text-lg font-semibold">{recentRoutines.length === 0 ? 'Create your first routine' : 'Start a new routine'}</h2>
         <p className="mt-2 text-sm text-ink/65">
           {recentRoutines.length === 0
