@@ -319,88 +319,93 @@ export function RoutineWorkspace() {
   return (
     <section className="space-y-6">
       <header className="rounded-3xl bg-white/80 p-6 shadow-soft">
-        <div className="flex items-start justify-between gap-3">
-          <p className="text-sm font-medium uppercase tracking-[0.25em] text-ink/50">Routine Workspace</p>
-          {!isCreatingNew ? (
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => {
-                  setTitleDraft(routine?.title ?? '');
-                  setDescriptionDraft(routine?.description ?? '');
-                  setIsEditingRoutineMeta(true);
-                }}
-                className="flex items-center justify-center rounded-full bg-black/5 px-3 py-2 text-sm font-medium"
-                aria-label="Edit title"
-              >
-                <Pencil className="h-4 w-4" />
-              </button>
-              <button
-                type="button"
-                onClick={() => void handleDeleteRoutine()}
-                className="flex items-center justify-center rounded-full bg-red-100 px-3 py-2 text-sm font-medium text-red-700"
-                aria-label="Delete routine"
-              >
-                <Trash2 className="h-4 w-4" />
-              </button>
-            </div>
-          ) : null}
+  {isEditingRoutineMeta ? (
+    <div className="space-y-3">
+      <input
+        value={titleDraft}
+        onChange={(event) => setTitleDraft(event.target.value)}
+        className="w-full rounded-full border border-black/10 bg-white px-4 py-2 text-lg font-semibold outline-none"
+        aria-label="Routine title"
+        placeholder="Routine title"
+      />
+      <textarea
+        value={descriptionDraft}
+        onChange={(event) => setDescriptionDraft(event.target.value)}
+        className="w-full rounded-2xl border border-black/10 bg-white px-4 py-3 text-sm outline-none"
+        aria-label="Routine description"
+        rows={3}
+        placeholder="Add a routine description"
+      />
+      {!isCreatingNew ? (
+        <div className="flex items-center gap-2">
+          <button type="button" onClick={() => void saveRoutineMeta()} className="rounded-full bg-ink px-4 py-2 text-sm font-medium text-paper">
+            Save
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setTitleDraft(routine?.title ?? '');
+              setDescriptionDraft(routine?.description ?? '');
+              setIsEditingRoutineMeta(false);
+            }}
+            className="rounded-full bg-black/5 px-4 py-2 text-sm font-medium"
+          >
+            Cancel
+          </button>
         </div>
-        {isEditingRoutineMeta ? (
-          <div className="mt-3 space-y-3">
-            <input
-              value={titleDraft}
-              onChange={(event) => setTitleDraft(event.target.value)}
-              className="w-full rounded-full border border-black/10 bg-white px-4 py-2 text-lg font-semibold outline-none"
-              aria-label="Routine title"
-              placeholder="Routine title"
-            />
-            <textarea
-              value={descriptionDraft}
-              onChange={(event) => setDescriptionDraft(event.target.value)}
-              className="w-full rounded-2xl border border-black/10 bg-white px-4 py-3 text-sm outline-none"
-              aria-label="Routine description"
-              rows={3}
-              placeholder="Add a routine description"
-            />
-            {!isCreatingNew ? (
-              <div className="flex items-center gap-2">
-                <button type="button" onClick={() => void saveRoutineMeta()} className="rounded-full bg-ink px-4 py-2 text-sm font-medium text-paper">
-                  Save
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setTitleDraft(routine?.title ?? '');
-                    setDescriptionDraft(routine?.description ?? '');
-                    setIsEditingRoutineMeta(false);
-                  }}
-                  className="rounded-full bg-black/5 px-4 py-2 text-sm font-medium"
-                >
-                  Cancel
-                </button>
-              </div>
-            ) : null}
+      ) : null}
+    </div>
+  ) : (
+    <>
+      {/* 1. Wrapped the title and buttons in a row flex container */}
+      <div className="flex items-center justify-between gap-4">
+        {/* Removed mt-3 from h1 to prevent layout shifting */}
+        <h1 className="text-3xl font-semibold tracking-tight">{effectiveTitle}</h1>
+        {!isCreatingNew ? (
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              type="button"
+              onClick={() => {
+                setTitleDraft(routine?.title ?? '');
+                setDescriptionDraft(routine?.description ?? '');
+                setIsEditingRoutineMeta(true);
+              }}
+              className="flex items-center justify-center rounded-full bg-black/5 px-3 py-2 text-sm font-medium"
+              aria-label="Edit routine details"
+            >
+              <Pencil className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              onClick={() => void handleDeleteRoutine()}
+              className="flex items-center justify-center rounded-full bg-red-100 px-3 py-2 text-sm font-medium text-red-700"
+              aria-label="Delete routine"
+            >
+              <Trash2 className="h-4 w-4" />
+            </button>
           </div>
-        ) : (
-          <>
-            <h1 className="mt-3 text-3xl font-semibold tracking-tight">{effectiveTitle}</h1>
-            {effectiveDescription ? <p className="mt-2 text-sm text-ink/70">{effectiveDescription}</p> : null}
-          </>
-        )}
-        <p className="mt-3 text-sm text-ink/70">Tap to expand or collapse details, then record today&apos;s practice.</p>
-      </header>
+        ) : null}
+      </div>
+      
+      {effectiveDescription ? <p className="mt-2 text-sm text-ink/70">{effectiveDescription}</p> : null}
+    </>
+  )}
+</header>
 
       {!isCreatingNew && activeRoutineId ? (
-        <section className="rounded-3xl bg-white/80 p-5 shadow-soft">
+        <section className="text-center rounded-3xl bg-white/80 p-5 shadow-soft">
           <p className="text-sm text-ink/75">
-            Want to share this routine with others? Hit the button below to copy a share link to your clipboard. When someone clicks the share link,
+            Want to share this routine with others? 
+          </p>
+          <p className="text-sm text-ink/75">
+            Hit the button below to copy a share link to your clipboard. When someone clicks the share link,
             they can import your routine into their habit tracker!
           </p>
           <p className="mt-2 text-xs text-ink/55">
             Note: if you make any changes to the routine, you&apos;ll need to click the button to generate a new link with the latest changes.
           </p>
-          <div className="mt-4 flex items-center gap-3">
+          {/* Added justify-center to keep the button and feedback centered */}
+          <div className="mt-4 flex items-center justify-center gap-3">
             <button
               type="button"
               onClick={() => void handleShareRoutine()}

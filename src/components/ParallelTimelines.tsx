@@ -52,11 +52,7 @@ export function ParallelTimelines({ routineId }: ParallelTimelinesProps) {
   }, []);
 
   return (
-    <section className="space-y-4 rounded-3xl bg-white/80 p-5 shadow-soft">
-      <div>
-        <p className="text-sm font-medium uppercase tracking-[0.25em] text-ink/50">Visual Fabric</p>
-        <h2 className="mt-2 text-xl font-semibold">Unified Timeline</h2>
-      </div>
+    <section className="max-w-xl mx-auto space-y-4 rounded-3xl bg-white/80 p-5 shadow-soft">
       {!hasTimelineHabits ? (
         <p className="text-sm text-ink/65">Add at least one daily or weekly habit to generate timeline visuals.</p>
       ) : null}
