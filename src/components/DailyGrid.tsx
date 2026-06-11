@@ -2,10 +2,13 @@ import type { TimelineTileSnapshot } from '../services/timelineService';
 import { getPastelClassName } from '../utils/pastelPalette';
 
 interface DailyGridProps {
-  tiles: TimelineTileSnapshot[];
+  dailyTiles: TimelineTileSnapshot[];
+  weeklyTiles: TimelineTileSnapshot[];
+  startLabel: string;
+  endLabel: string;
 }
 
-const DAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const DAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Week'];
 
 function pad(value: number) {
   return value.toString().padStart(2, '0');
@@ -16,17 +19,29 @@ function formatDayKey(date: Date) {
 }
 
 function getWeekStart(periodKey: string) {
-  const date = new Date(`${periodKey}T12:00:00`);
+  const normalizedKey = periodKey.endsWith('-SUN') ? periodKey.slice(0, -4) : periodKey;
+  const date = new Date(`${normalizedKey}T12:00:00`);
   date.setHours(0, 0, 0, 0);
   date.setDate(date.getDate() - date.getDay());
   return date;
 }
 
-function getWeekColumns(tiles: TimelineTileSnapshot[]) {
+function getWeekColumns(dailyTiles: TimelineTileSnapshot[], weeklyTiles: TimelineTileSnapshot[]) {
   const columns: Date[] = [];
   const seen = new Set<string>();
 
-  for (const tile of tiles) {
+  for (const tile of dailyTiles) {
+    const weekStart = getWeekStart(tile.periodKey);
+    const key = formatDayKey(weekStart);
+    if (seen.has(key)) {
+      continue;
+    }
+
+    seen.add(key);
+    columns.push(weekStart);
+  }
+
+  for (const tile of weeklyTiles) {
     const weekStart = getWeekStart(tile.periodKey);
     const key = formatDayKey(weekStart);
     if (seen.has(key)) {
@@ -40,46 +55,69 @@ function getWeekColumns(tiles: TimelineTileSnapshot[]) {
   return columns;
 }
 
-export function DailyGrid({ tiles }: DailyGridProps) {
-  const weekColumns = getWeekColumns(tiles);
-  const tilesByDay = new Map(tiles.map((tile) => [tile.periodKey, tile]));
+export function DailyGrid({ dailyTiles, weeklyTiles, startLabel, endLabel }: DailyGridProps) {
+  const weekColumns = getWeekColumns(dailyTiles, weeklyTiles);
+  const tilesByDay = new Map(dailyTiles.map((tile) => [tile.periodKey, tile]));
+  const weeklyByKey = new Map(weeklyTiles.map((tile) => [tile.periodKey, tile]));
 
   return (
     <section className="space-y-2">
-      <h3 className="text-sm font-semibold uppercase tracking-[0.25em] text-ink/55">Daily</h3>
+      <h3 className="text-sm font-semibold uppercase tracking-[0.25em] text-ink/55">Timeline</h3>
       <div className="grid grid-cols-[auto_auto_1fr] items-start gap-2">
         <div className="flex h-full items-center justify-center px-1 text-[10px] font-medium uppercase tracking-[0.2em] text-ink/45 [writing-mode:vertical-rl]">
           Days
         </div>
         <div className="pt-6">
-          <div className="grid grid-rows-7 gap-1.5 text-[10px] font-medium uppercase tracking-[0.15em] text-ink/45">
+          <div className="grid grid-rows-8 gap-2 text-[10px] font-medium uppercase tracking-[0.15em] text-ink/45">
             {DAY_LABELS.map((label) => (
-              <span key={label} className="flex h-2.5 items-center justify-end pr-1">
+              <span key={label} className="flex h-4 items-center justify-end pr-1">
                 {label}
               </span>
             ))}
           </div>
         </div>
         <div className="space-y-2 overflow-x-auto pb-1">
-          <div className="text-[10px] font-medium uppercase tracking-[0.2em] text-ink/45">Weeks</div>
+          <div className="flex min-w-[16rem] items-center justify-between gap-3 text-[10px] font-medium uppercase tracking-[0.2em] text-ink/45">
+            <span>{startLabel}</span>
+            <span>{endLabel}</span>
+          </div>
           <div
             role="list"
-            aria-label="Daily timeline"
-            className="grid gap-1.5"
+            aria-label="Unified timeline"
+            className="grid gap-2"
             style={{
-              gridTemplateColumns: `repeat(${weekColumns.length}, minmax(0, 0.625rem))`,
-              gridTemplateRows: 'repeat(7, minmax(0, 0.625rem))',
+              gridTemplateColumns: `repeat(${weekColumns.length}, minmax(0, 1.25rem))`,
+              gridTemplateRows: 'repeat(8, minmax(0, 1rem))',
             }}
           >
             {weekColumns.flatMap((weekStart) =>
               DAY_LABELS.map((_, dayIndex) => {
+                if (dayIndex === 7) {
+                  const weeklyKey = `${formatDayKey(weekStart)}-SUN`;
+                  const tile = weeklyByKey.get(weeklyKey);
+                  if (!tile) {
+                    return <div key={`weekly-${weeklyKey}`} aria-hidden="true" className="h-4 w-6 rounded-full bg-transparent" />;
+                  }
+
+                  return (
+                    <div
+                      key={tile.periodKey}
+                      role="listitem"
+                      data-shape="weekly-pill"
+                      aria-label={`${tile.periodKey} ${tile.completed ? 'completed' : 'not completed'}`}
+                      title={tile.periodKey}
+                      className={`h-4 w-6 rounded-full ${tile.completed ? getPastelClassName(tile.pastelToken) : 'bg-black/10'} transition-colors`}
+                    />
+                  );
+                }
+
                 const periodDate = new Date(weekStart);
                 periodDate.setDate(weekStart.getDate() + dayIndex);
                 const periodKey = formatDayKey(periodDate);
                 const tile = tilesByDay.get(periodKey);
 
                 if (!tile) {
-                  return <div key={periodKey} aria-hidden="true" className="h-2.5 w-2.5 rounded-full bg-transparent" />;
+                  return <div key={periodKey} aria-hidden="true" className="h-4 w-4 rounded-md bg-transparent" />;
                 }
 
                 return (
@@ -88,7 +126,7 @@ export function DailyGrid({ tiles }: DailyGridProps) {
                     role="listitem"
                     aria-label={`${tile.periodKey} ${tile.completed ? 'completed' : 'not completed'}`}
                     title={tile.periodKey}
-                    className={`h-2 w-2 rounded-full ${tile.completed ? getPastelClassName(tile.pastelToken) : 'bg-black/10'} transition-colors`}
+                    className={`h-4 w-4 rounded-md ${tile.completed ? getPastelClassName(tile.pastelToken) : 'bg-black/10'} transition-colors`}
                   />
                 );
               }),

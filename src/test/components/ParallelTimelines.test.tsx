@@ -2,7 +2,6 @@ import React from 'react';
 import { describe, expect, it } from 'vitest';
 import { renderWithProviders } from '../utils';
 import { DailyGrid } from '../../components/DailyGrid';
-import { WeeklyRibbon } from '../../components/WeeklyRibbon';
 import type { TimelineTileSnapshot } from '../../services/timelineService';
 
 function makeDailyTiles(): TimelineTileSnapshot[] {
@@ -14,35 +13,41 @@ function makeDailyTiles(): TimelineTileSnapshot[] {
 }
 
 describe('Timeline layout', () => {
-  it('renders the daily grid with weekday rows and axis labels', () => {
-    renderWithProviders(<DailyGrid tiles={makeDailyTiles()} />);
-
-    expect(document.body.textContent).toContain('Days');
-    expect(document.body.textContent).toContain('Weeks');
-    expect(document.body.textContent).toContain('Sun');
-    expect(document.body.textContent).toContain('Sat');
-  });
-
-  it('renders compact daily tiles', () => {
-    renderWithProviders(<DailyGrid tiles={makeDailyTiles()} />);
-
-    const items = document.querySelectorAll('[role="listitem"]');
-    expect(items[0]?.className).toContain('h-2');
-    expect(items[0]?.className).toContain('w-2');
-  });
-
-  it('aligns weekly pills to an explicit week-column grid', () => {
+  it('renders the unified grid with weekday labels and timeline bounds', () => {
     renderWithProviders(
-      <WeeklyRibbon
-        tiles={[
+      <DailyGrid
+        dailyTiles={makeDailyTiles()}
+        weeklyTiles={[
           { periodKey: '2026-06-01-SUN', completed: true, pastelToken: 'mist-2' },
           { periodKey: '2026-06-08-SUN', completed: false, pastelToken: 'mist-2' },
         ]}
-        columnCount={2}
+        startLabel="Jun 1, 2026"
+        endLabel="Jun 14, 2026"
       />,
     );
 
-    expect(document.body.textContent).toContain('Weekly');
-    expect(document.querySelector('[data-week-columns="2"]')).toBeTruthy();
+    expect(document.body.textContent).toContain('Days');
+    expect(document.body.textContent).toContain('Jun 1, 2026');
+    expect(document.body.textContent).toContain('Jun 14, 2026');
+    expect(document.body.textContent).toContain('Sun');
+    expect(document.body.textContent).toContain('Week');
+  });
+
+  it('renders larger daily tiles and distinct weekly pill shape', () => {
+    renderWithProviders(
+      <DailyGrid
+        dailyTiles={makeDailyTiles()}
+        weeklyTiles={[{ periodKey: '2026-05-31-SUN', completed: true, pastelToken: 'mist-2' }]}
+        startLabel="Jun 1, 2026"
+        endLabel="Jun 14, 2026"
+      />,
+    );
+
+    const items = document.querySelectorAll('[role="listitem"]');
+    expect(items[0]?.className).toContain('h-4');
+    expect(items[0]?.className).toContain('w-4');
+
+    const weeklyPill = document.querySelector('[data-shape="weekly-pill"]');
+    expect(weeklyPill).toBeTruthy();
   });
 });

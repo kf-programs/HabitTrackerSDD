@@ -129,7 +129,57 @@
 
 ---
 
-## Phase 6: PWA Optimization
+## Phase 6: User Story 4 - Enhanced UX and UI Polish (Priority: P1)
+
+**Goal**: Improve user experience with custom dialogs, better navigation cues, icon-based actions, and more intuitive controls for routines and categories.
+
+**Independent Test**: Verify all new UI controls (icons, buttons), custom dialogs, and navigation highlights behave as expected.
+
+### Tests for User Story 4 (MANDATORY) ⚠️
+
+- [X] T057 [P] [US4] Add tests for the custom confirmation dialog in `src/test/components/modals/ConfirmationDialog.test.tsx`
+- [X] T058 [P] [US4] Add tests for the routine-specific bottom navigation highlight in `src/test/app/BottomNavBar.test.tsx`
+- [X] T059 [P] [US4] Add tests for the new "Create Routine" and "New Category" button visibility and functionality in `src/test/app/Routines.test.tsx`
+- [X] T060 [P] [US4] Add tests for the unsaved changes dialog when creating/editing a routine in `src/test/components/RoutineWorkspace.test.tsx`
+
+### Implementation for User Story 4
+
+- [X] T061 [P] [US4] Install a popular icon library (e.g., `lucide-react`) and update `package.json`
+- [X] T062 [P] [US4] Create a reusable, accessible confirmation dialog component in `src/components/modals/ConfirmationDialog.tsx`
+- [X] T063 [US4] Replace the `window.confirm` for routine deletion with the new `ConfirmationDialog` in `src/components/RoutineWorkspace.tsx`
+- [X] T064 [US4] Update the bottom navigation to highlight the current routine's name when on a routine page in `src/app/BottomNavBar.tsx` and `src/app/Router.tsx`
+- [X] T065 [P] [US4] Make the "Create routine" action always visible on the `DashboardView` below recent routines in `src/components/DashboardView.tsx`
+- [X] T066 [US4] Implement the "Create" and "Cancel" buttons for new routines, preventing auto-save, in `src/components/RoutineWorkspace.tsx` and `src/repositories/routinesRepository.ts`
+- [X] T067 [US4] Implement an unsaved changes confirmation dialog when navigating away from a new or edited routine in `src/components/RoutineWorkspace.tsx`
+- [X] T068 [P] [US4] Replace "Edit title" and "Delete routine" text buttons with pencil and trash icons in `src/components/RoutineWorkspace.tsx`
+- [X] T069 [US4] Add the ability to edit a routine's description when clicking the pencil icon in `src/components/RoutineWorkspace.tsx` and update the data model in `src/db/schema.ts`
+- [X] T070 [P] [US4] Add a "New Category" button to the routine workspace in `src/components/RoutineWorkspace.tsx`
+- [X] T071 [US4] Add a description property to categories and allow editing in `src/components/CategoryAccordion.tsx` and `src/db/schema.ts`
+- [X] T072 [US4] Ensure new habits are added to the bottom of their category list in `src/components/CategoryAccordion.tsx`
+- [X] T073 [P] [US4] Move the "Share Routine" button and its descriptive text to a dedicated section in `src/components/RoutineWorkspace.tsx`
+
+---
+
+## Phase 7: User Story 5 - Timeline Redesign (Priority: P2)
+
+**Goal**: Consolidate the daily and weekly timelines into a single, larger, more informative grid.
+
+**Independent Test**: Verify the new unified timeline renders correctly with a weekly row, updated labels, and correct data.
+
+### Tests for User Story 5 (MANDATORY) ⚠️
+
+- [X] T074 [P] [US5] Add tests for the unified timeline grid, including the new weekly row and distinct cell shapes in `src/test/components/ParallelTimelines.test.tsx`
+- [X] T075 [P] [US5] Add tests for the dual-aligned date labels in `src/test/components/ParallelTimelines.test.tsx`
+
+### Implementation for User Story 5
+
+- [X] T076 [US5] Merge the weekly ribbon into the daily grid as a new, visually distinct bottom row in `src/components/ParallelTimelines.tsx` and `src/components/DailyGrid.tsx`, removing `src/components/WeeklyRibbon.tsx`
+- [X] T077 [US5] Double the overall size of the timeline component in `src/components/ParallelTimelines.tsx`
+- [X] T078 [US5] Implement the left-aligned start date and right-aligned current date labels for the timeline's horizontal axis in `src/components/ParallelTimelines.tsx`
+
+---
+
+## Phase 8: PWA Optimization
 
 **Purpose**: Offline installability, service worker caching, and app manifest completeness.
 
@@ -141,7 +191,7 @@
 
 ---
 
-## Phase 7: Polish & Cross-Cutting Concerns
+## Phase 9: Polish & Cross-Cutting Concerns
 
 **Purpose**: Final quality, accessibility, and documentation polish across stories.
 

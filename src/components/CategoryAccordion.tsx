@@ -10,15 +10,17 @@ interface NewHabitInput {
 interface CategoryAccordionProps {
   categoryId: string;
   title: string;
+  description?: string;
   defaultOpen?: boolean;
   children: ReactNode;
-  onRenameCategory?: (categoryId: string, name: string) => Promise<void>;
+  onRenameCategory?: (categoryId: string, input: { name: string; description?: string }) => Promise<void>;
   onCreateHabit?: (categoryId: string, input: NewHabitInput) => Promise<void>;
 }
 
 export function CategoryAccordion({
   categoryId,
   title,
+  description,
   defaultOpen = false,
   children,
   onRenameCategory,
@@ -27,6 +29,7 @@ export function CategoryAccordion({
   const [isOpen, setIsOpen] = useState(defaultOpen);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [nextTitle, setNextTitle] = useState(title);
+  const [nextDescription, setNextDescription] = useState(description ?? '');
   const [isCreatingHabit, setIsCreatingHabit] = useState(false);
   const [newHabitTitle, setNewHabitTitle] = useState('');
   const [newHabitTimeframe, setNewHabitTimeframe] = useState<HabitTimeframe>('daily');
@@ -39,7 +42,10 @@ export function CategoryAccordion({
       return;
     }
 
-    await onRenameCategory(categoryId, trimmed);
+    await onRenameCategory(categoryId, {
+      name: trimmed,
+      description: nextDescription.trim() || undefined,
+    });
     setIsEditingTitle(false);
   }
 
@@ -63,35 +69,57 @@ export function CategoryAccordion({
     <article className="overflow-hidden rounded-3xl bg-white/80 shadow-soft">
       <div className="flex w-full items-center justify-between px-5 py-4 text-left">
         {isEditingTitle ? (
-          <div className="flex w-full items-center gap-2">
+          <div className="w-full space-y-2">
             <input
               aria-label="Category title"
               value={nextTitle}
               onChange={(event) => setNextTitle(event.target.value)}
               className="w-full rounded-full border border-black/10 bg-white px-3 py-2 text-sm outline-none"
             />
-            <button type="button" onClick={saveCategoryTitle} className="rounded-full bg-ink px-3 py-2 text-xs font-medium text-paper">
-              Save
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setNextTitle(title);
-                setIsEditingTitle(false);
-              }}
-              className="rounded-full bg-black/5 px-3 py-2 text-xs font-medium"
-            >
-              Cancel
-            </button>
+            <textarea
+              aria-label="Category description"
+              value={nextDescription}
+              onChange={(event) => setNextDescription(event.target.value)}
+              className="w-full rounded-2xl border border-black/10 bg-white px-3 py-2 text-sm outline-none"
+              rows={2}
+              placeholder="Add a short category description"
+            />
+            <div className="flex items-center gap-2">
+              <button type="button" onClick={saveCategoryTitle} className="rounded-full bg-ink px-3 py-2 text-xs font-medium text-paper">
+                Save
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setNextTitle(title);
+                  setNextDescription(description ?? '');
+                  setIsEditingTitle(false);
+                }}
+                className="rounded-full bg-black/5 px-3 py-2 text-xs font-medium"
+              >
+                Cancel
+              </button>
+            </div>
           </div>
         ) : (
           <>
             <button type="button" className="flex flex-1 items-center justify-between" onClick={() => setIsOpen((value) => !value)}>
-              <span className="text-base font-semibold">{title}</span>
+              <span>
+                <span className="block text-base font-semibold">{title}</span>
+                {description ? <span className="mt-1 block text-xs text-ink/60">{description}</span> : null}
+              </span>
               <span className="text-lg text-ink/45">{isOpen ? '−' : '+'}</span>
             </button>
             {onRenameCategory ? (
-              <button type="button" onClick={() => setIsEditingTitle(true)} className="ml-3 rounded-full bg-black/5 px-3 py-1 text-xs font-medium">
+              <button
+                type="button"
+                onClick={() => {
+                  setNextTitle(title);
+                  setNextDescription(description ?? '');
+                  setIsEditingTitle(true);
+                }}
+                className="ml-3 rounded-full bg-black/5 px-3 py-1 text-xs font-medium"
+              >
                 Edit
               </button>
             ) : null}

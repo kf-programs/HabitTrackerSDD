@@ -1,6 +1,4 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { createCategory } from '../repositories/categoriesRepository';
-import { createRoutine } from '../repositories/routinesRepository';
 import type { RoutineRecord } from '../db/schema';
 
 interface DashboardViewProps {
@@ -17,10 +15,8 @@ export function DashboardView({ routines }: DashboardViewProps) {
     .sort((a, b) => Date.parse(b.lastAccessedAt) - Date.parse(a.lastAccessedAt))
     .slice(0, 3);
 
-  async function handleCreateRoutine() {
-    const routine = await createRoutine('New Routine');
-    await createCategory(routine.id, 'First Category', 0);
-    navigate(`/routines/${routine.id}`);
+  function handleCreateRoutine() {
+    navigate('/routines/new');
   }
 
   return (
@@ -33,21 +29,7 @@ export function DashboardView({ routines }: DashboardViewProps) {
         </p>
       </header>
 
-      {recentRoutines.length === 0 ? (
-        <div className="rounded-3xl border border-dashed border-ink/10 bg-white/60 p-6">
-          <h2 className="text-lg font-semibold">Create your first routine</h2>
-          <p className="mt-2 text-sm text-ink/65">
-            No active routines yet. Begin with a gentle ritual that fits your day.
-          </p>
-          <button
-            type="button"
-            onClick={() => void handleCreateRoutine()}
-            className="mt-4 inline-flex rounded-full bg-ink px-4 py-2 text-sm font-medium text-paper"
-          >
-            Create your first routine
-          </button>
-        </div>
-      ) : (
+      {recentRoutines.length > 0 && (
         <div className="rounded-3xl bg-white/80 p-6 shadow-soft">
           <h2 className="text-lg font-semibold">Recent routines</h2>
           <div className="mt-3 space-y-2">
@@ -64,6 +46,22 @@ export function DashboardView({ routines }: DashboardViewProps) {
           </div>
         </div>
       )}
+
+      <div className={`rounded-3xl p-6 ${recentRoutines.length === 0 ? 'border border-dashed border-ink/10 bg-white/60' : ''}`}>
+        <h2 className="text-lg font-semibold">{recentRoutines.length === 0 ? 'Create your first routine' : 'Start a new routine'}</h2>
+        <p className="mt-2 text-sm text-ink/65">
+          {recentRoutines.length === 0
+            ? 'No active routines yet. Begin with a gentle ritual that fits your day.'
+            : 'A new routine can be a simple step towards a more mindful day.'}
+        </p>
+        <button
+          type="button"
+          onClick={() => void handleCreateRoutine()}
+          className="mt-4 inline-flex rounded-full bg-ink px-4 py-2 text-sm font-medium text-paper"
+        >
+          {recentRoutines.length === 0 ? 'Create your first routine' : 'Create routine'}
+        </button>
+      </div>
     </section>
   );
 }
