@@ -1,5 +1,6 @@
-import { Link } from 'react-router-dom';
-import { updateRoutine } from '../repositories/routinesRepository';
+import { Link, useNavigate } from 'react-router-dom';
+import { createRoutine, updateRoutine } from '../repositories/routinesRepository';
+import { createCategory } from '../repositories/categoriesRepository';
 import type { RoutineRecord } from '../db/schema';
 
 interface AllRoutinesViewProps {
@@ -7,14 +8,30 @@ interface AllRoutinesViewProps {
 }
 
 export function AllRoutinesView({ routines }: AllRoutinesViewProps) {
+  const navigate = useNavigate();
   const activeRoutines = routines.filter((routine) => routine.status === 'active');
   const pausedRoutines = routines.filter((routine) => routine.status === 'paused');
 
+  async function handleCreateRoutine() {
+    const routine = await createRoutine('New Routine');
+    await createCategory(routine.id, 'First Category', 0);
+    navigate(`/routines/${routine.id}`);
+  }
+
   return (
     <section className="space-y-6">
-      <header>
-        <p className="text-sm font-medium uppercase tracking-[0.25em] text-ink/50">All Routines</p>
-        <h1 className="mt-3 text-3xl font-semibold tracking-tight">Routine Directory</h1>
+      <header className="flex items-start justify-between gap-4">
+        <div>
+          <p className="text-sm font-medium uppercase tracking-[0.25em] text-ink/50">All Routines</p>
+          <h1 className="mt-3 text-3xl font-semibold tracking-tight">Routine Directory</h1>
+        </div>
+        <button
+          type="button"
+          onClick={() => void handleCreateRoutine()}
+          className="rounded-full bg-ink px-4 py-2 text-sm font-medium text-paper"
+        >
+          Create routine
+        </button>
       </header>
 
       <div className="space-y-4">

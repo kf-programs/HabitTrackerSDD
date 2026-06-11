@@ -1,4 +1,6 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { createCategory } from '../repositories/categoriesRepository';
+import { createRoutine } from '../repositories/routinesRepository';
 import type { RoutineRecord } from '../db/schema';
 
 interface DashboardViewProps {
@@ -6,6 +8,7 @@ interface DashboardViewProps {
 }
 
 export function DashboardView({ routines }: DashboardViewProps) {
+  const navigate = useNavigate();
   const now = new Date();
   const hour = now.getHours();
   const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
@@ -13,6 +16,12 @@ export function DashboardView({ routines }: DashboardViewProps) {
   const recentRoutines = [...activeRoutines]
     .sort((a, b) => Date.parse(b.lastAccessedAt) - Date.parse(a.lastAccessedAt))
     .slice(0, 3);
+
+  async function handleCreateRoutine() {
+    const routine = await createRoutine('New Routine');
+    await createCategory(routine.id, 'First Category', 0);
+    navigate(`/routines/${routine.id}`);
+  }
 
   return (
     <section className="space-y-6">
@@ -30,12 +39,13 @@ export function DashboardView({ routines }: DashboardViewProps) {
           <p className="mt-2 text-sm text-ink/65">
             No active routines yet. Begin with a gentle ritual that fits your day.
           </p>
-          <Link
-            to="/routines"
+          <button
+            type="button"
+            onClick={() => void handleCreateRoutine()}
             className="mt-4 inline-flex rounded-full bg-ink px-4 py-2 text-sm font-medium text-paper"
           >
-            Go to All Routines
-          </Link>
+            Create your first routine
+          </button>
         </div>
       ) : (
         <div className="rounded-3xl bg-white/80 p-6 shadow-soft">

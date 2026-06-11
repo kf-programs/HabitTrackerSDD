@@ -58,6 +58,7 @@
 
 - [X] T015 [P] [US1] Add repository CRUD tests for routine creation, category nesting, and habit persistence in `src/test/repositories/routinesRepository.test.ts`
 - [X] T016 [P] [US1] Add workspace interaction tests for habit entry creation and measurement autosave in `src/test/components/RoutineWorkspace.test.tsx`
+- [X] T049 [P] [US1] Add routine deletion confirmation tests in `src/test/components/RoutineWorkspace.test.tsx`
 
 ### Implementation for User Story 1
 
@@ -67,6 +68,7 @@
 - [X] T020 [US1] Implement measurement blur autosave and read-mode transition in `src/components/HabitRow.tsx`
 - [X] T021 [US1] Wire live query-backed persistence for the routine workspace in `src/app/Router.tsx`, `src/app/AppShell.tsx`, and `src/components/RoutineWorkspace.tsx`
 - [X] T048 [US1] Implement non-destructive storage-pressure handling, retry guidance, and user-safe error messaging in `src/repositories/entriesRepository.ts` and `src/components/HabitRow.tsx`
+- [X] T050 [US1] Add a confirmation dialog before routine deletion in `src/components/RoutineWorkspace.tsx`
 
 **Checkpoint**: User Story 1 should now be fully functional and testable independently.
 
@@ -83,6 +85,7 @@
 - [X] T022 [P] [US2] Add dashboard tests for greeting, recent routines, and empty state behavior in `src/test/components/DashboardView.test.tsx`
 - [X] T023 [P] [US2] Add directory tests for active/paused segmentation and inline toggles in `src/test/components/AllRoutinesView.test.tsx`
 - [X] T024 [P] [US2] Add navigation and accordion tests for bottom nav routing and default-open category behavior in `src/test/components/BottomNavBar.test.tsx` and `src/test/components/CategoryAccordion.test.tsx`
+- [X] T051 [P] [US2] Add tests for create-routine entry points on the Home empty state and All Routines view in `src/test/components/DashboardView.test.tsx` and `src/test/components/AllRoutinesView.test.tsx`
 
 ### Implementation for User Story 2
 
@@ -91,6 +94,7 @@
 - [X] T027 [US2] Implement bottom navigation and view switching in `src/app/BottomNavBar.tsx` and `src/app/Router.tsx`
 - [X] T028 [US2] Ensure the routine workspace opens the first category by default and keeps remaining categories collapsed in `src/components/CategoryAccordion.tsx`
 - [X] T029 [US2] Connect Home and Directory views to live database queries in `src/app/AppShell.tsx` and `src/components/DashboardView.tsx`
+- [X] T052 [US2] Add create-routine actions to the All Routines page and Home empty state in `src/components/AllRoutinesView.tsx`, `src/components/DashboardView.tsx`, and `src/repositories/routinesRepository.ts`
 
 **Checkpoint**: User Stories 1 and 2 should both work independently.
 
@@ -107,6 +111,7 @@
 - [X] T030 [P] [US3] Add timeline service tests for 120-day daily windows, Sunday-start weekly periods, and history preservation in `src/test/services/timelineService.test.ts`
 - [X] T031 [P] [US3] Add sharing and import tests for structure-only payloads, duplicate-title suffixes, and cancel/error behavior in `src/test/services/sharingService.test.ts`
 - [X] T032 [P] [US3] Add import preview dialog tests for confirmation and rejection flows in `src/test/components/ImportPreviewDialog.test.tsx`
+- [X] T053 [P] [US3] Add component tests for routine sharing and the revised daily and weekly timeline layout in `src/test/components/RoutineWorkspace.test.tsx` and `src/test/components/ParallelTimelines.test.tsx`
 
 ### Implementation for User Story 3
 
@@ -116,6 +121,9 @@
 - [X] T036 [P] [US3] Implement share payload export and URL-safe compression in `src/services/sharingService.ts` and `src/utils/urlCodec.ts`
 - [X] T037 [US3] Implement import route parsing, confirmation preview, and duplicate-title suffix handling in `src/components/ImportPreviewDialog.tsx` and `src/app/Router.tsx`
 - [X] T038 [US3] Preserve historical tiles when habits are edited, archived, or deleted by updating `src/repositories/habitsRepository.ts` and `src/services/timelineService.ts`
+- [X] T054 [US3] Add a routine share button alongside edit and delete actions and wire it to structure-only export in `src/components/RoutineWorkspace.tsx` and `src/services/sharingService.ts`
+- [X] T055 [US3] Reduce daily tile size and reorganize the daily timeline into seven weekday rows with axis labels and newest days on the right in `src/components/DailyGrid.tsx`
+- [X] T056 [US3] Align weekly pills to daily week columns and add explicit `Daily` and `Weekly` timeline titles in `src/components/ParallelTimelines.tsx` and `src/components/WeeklyRibbon.tsx`
 
 **Checkpoint**: All user stories should now be independently functional.
 

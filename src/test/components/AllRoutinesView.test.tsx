@@ -7,9 +7,11 @@ import { AllRoutinesView } from '../../components/AllRoutinesView';
 import type { RoutineRecord } from '../../db/schema';
 
 const updateRoutineMock = vi.fn();
+const createRoutineMock = vi.fn();
 
 vi.mock('../../repositories/routinesRepository', () => ({
   updateRoutine: (...args: unknown[]) => updateRoutineMock(...args),
+  createRoutine: (...args: unknown[]) => createRoutineMock(...args),
 }));
 
 function makeRoutine(overrides: Partial<RoutineRecord>): RoutineRecord {
@@ -61,5 +63,19 @@ describe('AllRoutinesView', () => {
 
     expect(updateRoutineMock).toHaveBeenCalledWith('a-1', { status: 'paused' });
     expect(updateRoutineMock).toHaveBeenCalledWith('p-1', { status: 'active' });
+  });
+
+  it('offers a create routine action', async () => {
+    createRoutineMock.mockResolvedValue({ id: 'new-routine' });
+
+    renderWithProviders(
+      <MemoryRouter>
+        <AllRoutinesView routines={[]} />
+      </MemoryRouter>,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Create routine' }));
+
+    expect(createRoutineMock).toHaveBeenCalledWith('New Routine');
   });
 });

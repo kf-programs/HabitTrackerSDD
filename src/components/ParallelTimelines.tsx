@@ -4,7 +4,7 @@ import { DailyGrid } from './DailyGrid';
 import { WeeklyRibbon } from './WeeklyRibbon';
 import { db } from '../db/client';
 import { listHabitsForRoutine } from '../repositories/habitsRepository';
-import { buildDailyTimeline, buildWeeklyTimeline } from '../services/timelineService';
+import { buildDailyTimeline, buildWeeklyTimeline, buildVisibleWeekKeys } from '../services/timelineService';
 
 interface ParallelTimelinesProps {
   routineId: string;
@@ -36,6 +36,14 @@ export function ParallelTimelines({ routineId }: ParallelTimelinesProps) {
   const showDaily = dailyHabits.length > 0;
   const showWeekly = weeklyHabits.length > 0;
 
+  const weekColumnCount = useMemo(() => {
+    if (showDaily) {
+      return buildVisibleWeekKeys().length;
+    }
+
+    return weeklyTiles.length;
+  }, [showDaily, weeklyTiles.length]);
+
   return (
     <section className="space-y-4 rounded-3xl bg-white/80 p-5 shadow-soft">
       <div>
@@ -46,7 +54,7 @@ export function ParallelTimelines({ routineId }: ParallelTimelinesProps) {
         <p className="text-sm text-ink/65">Add at least one daily or weekly habit to generate timeline visuals.</p>
       ) : null}
       {showDaily ? <DailyGrid tiles={dailyTiles} /> : null}
-      {showWeekly ? <WeeklyRibbon tiles={weeklyTiles} /> : null}
+      {showWeekly ? <WeeklyRibbon tiles={weeklyTiles} columnCount={weekColumnCount} /> : null}
     </section>
   );
 }

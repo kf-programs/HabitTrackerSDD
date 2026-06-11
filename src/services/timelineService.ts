@@ -1,5 +1,5 @@
 import type { EntryRecord, HabitRecord } from '../db/schema';
-import { getDayKey, getWeekKey, getRollingDayKeys, getRollingWeekKeys } from '../utils/dateBoundaries';
+import { getDayKey, getWeekKey, getRollingDayKeys } from '../utils/dateBoundaries';
 import { pickPastelToken } from '../utils/pastelPalette';
 import type { PastelToken } from '../utils/pastelPalette';
 
@@ -23,6 +23,12 @@ function isCompletedEntry(entry: EntryRecord) {
 
 export function buildDailyWindow(today = new Date()) {
   return getRollingDayKeys(120, today);
+}
+
+export function buildVisibleWeekKeys(today = new Date()) {
+  return Array.from(
+    new Set(buildDailyWindow(today).map((dayKey) => getWeekKey(new Date(`${dayKey}T12:00:00`)))),
+  );
 }
 
 export function getPeriodKeyForHabit(habit: HabitRecord, date = new Date()) {
@@ -76,7 +82,7 @@ export function buildDailyTimeline(input: BuildTimelineInput, existingTiles: Tim
 
 export function buildWeeklyTimeline(input: BuildTimelineInput, existingTiles: TimelineTileSnapshot[] = [], today = new Date()) {
   const weeklyHabitIds = new Set(input.habits.filter((habit) => habit.timeframe === 'weekly').map((habit) => habit.id));
-  const weekKeys = getRollingWeekKeys(12, today);
+  const weekKeys = buildVisibleWeekKeys(today);
 
   const generated = weekKeys.map((periodKey) => {
     const completed = input.entries.some(

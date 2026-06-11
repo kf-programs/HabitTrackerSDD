@@ -10,6 +10,7 @@ import { listHabitsForRoutine, createHabit, updateHabit } from '../repositories/
 import { db } from '../db/client';
 import { getPeriodKeyForHabit } from '../services/timelineService';
 import { upsertEntry } from '../repositories/entriesRepository';
+import { exportRoutineStructure } from '../services/sharingService';
 import type { HabitRecord, HabitTimeframe, HabitTrackingType } from '../db/schema';
 
 export function RoutineWorkspace() {
@@ -17,6 +18,7 @@ export function RoutineWorkspace() {
   const navigate = useNavigate();
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [titleDraft, setTitleDraft] = useState('');
+  const [shareFeedback, setShareFeedback] = useState('');
 
   const routine = useLiveQuery(async () => {
     if (!routineId) return undefined;
@@ -105,6 +107,29 @@ export function RoutineWorkspace() {
     setIsEditingTitle(false);
   }
 
+  async function handleShareRoutine() {
+    const encodedPayload = await exportRoutineStructure(activeRoutineId);
+    const shareUrl = `${window.location.origin}/import?d=${encodedPayload}`;
+
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(shareUrl);
+      setShareFeedback('Share link copied to clipboard.');
+      return;
+    }
+
+    setShareFeedback(shareUrl);
+  }
+
+  async function handleDeleteRoutine() {
+    const confirmed = window.confirm('Delete this routine? This removes the routine from this device.');
+    if (!confirmed) {
+      return;
+    }
+
+    await deleteRoutine(activeRoutineId);
+    navigate('/routines');
+  }
+
   return (
     <section className="space-y-6">
       <header className="rounded-3xl bg-white/80 p-6 shadow-soft">
@@ -128,6 +153,13 @@ export function RoutineWorkspace() {
         <div className="mt-4 flex gap-2">
           <button
             type="button"
+            onClick={() => void handleShareRoutine()}
+            className="rounded-full bg-sage px-4 py-2 text-sm font-medium text-ink"
+          >
+            Share routine
+          </button>
+          <button
+            type="button"
             onClick={() => {
               setTitleDraft(routine.title);
               setIsEditingTitle(true);
@@ -138,15 +170,13 @@ export function RoutineWorkspace() {
           </button>
           <button
             type="button"
-            onClick={async () => {
-              await deleteRoutine(activeRoutineId);
-              navigate('/routines');
-            }}
+            onClick={() => void handleDeleteRoutine()}
             className="rounded-full bg-red-100 px-4 py-2 text-sm font-medium text-red-700"
           >
-            Delete
+            Delete routine
           </button>
         </div>
+        {shareFeedback ? <p className="mt-3 text-sm text-ink/65">{shareFeedback}</p> : null}
       </header>
 
       <ParallelTimelines routineId={activeRoutineId} />
