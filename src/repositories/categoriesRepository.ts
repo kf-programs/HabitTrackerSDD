@@ -13,12 +13,13 @@ export async function saveCategory(category: CategoryRecord) {
   await db.categories.put(category);
 }
 
-export async function createCategory(routineId: string, name: string, orderIndex: number) {
+export async function createCategory(routineId: string, name: string, orderIndex: number, description?: string) {
   const now = new Date().toISOString();
   const category: CategoryRecord = {
     id: crypto.randomUUID(),
     routineId,
     name: name.trim(),
+    description: description?.trim() || undefined,
     orderIndex,
     isExpandedDefault: orderIndex === 0,
     createdAt: now,
@@ -29,7 +30,10 @@ export async function createCategory(routineId: string, name: string, orderIndex
   return category;
 }
 
-export async function updateCategory(categoryId: string, updates: Partial<Pick<CategoryRecord, 'name' | 'isExpandedDefault'>>) {
+export async function updateCategory(
+  categoryId: string,
+  updates: Partial<Pick<CategoryRecord, 'name' | 'description' | 'isExpandedDefault'>>,
+) {
   await db.categories.update(categoryId, {
     ...updates,
     updatedAt: getNow(),

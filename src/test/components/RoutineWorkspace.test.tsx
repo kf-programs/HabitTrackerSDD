@@ -7,6 +7,7 @@ import { RoutineWorkspace } from '../../components/RoutineWorkspace';
 import { seedDatabase } from '../../db/seed';
 import { db } from '../../db/client';
 import { waitFor, screen } from '@testing-library/react';
+import * as categoriesRepository from '../../repositories/categoriesRepository';
 
 const exportRoutineStructureMock = vi.fn();
 
@@ -85,21 +86,151 @@ describe('RoutineWorkspace interactions', () => {
     expect(navigator.clipboard.writeText).toHaveBeenCalledWith(`${window.location.origin}/import?d=encoded-payload`);
   });
 
-  it('asks for confirmation before deleting a routine', async () => {
+  it('opens a confirmation dialog before deleting a routine', async () => {
     await seedDatabase();
-    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(false);
 
     renderWithProviders(
       <MemoryRouter initialEntries={['/routines/routine-morning']}>
         <Routes>
           <Route path="/routines/:routineId" element={<RoutineWorkspace />} />
         </Routes>
-      </MemoryRouter>,
+      </MemoryRouter>
     );
 
-    await userEvent.click(await screen.findByRole('button', { name: 'Delete routine' }));
+    await userEvent.click(await screen.findByRole('button', { name: /delete routine/i }));
 
-    expect(confirmSpy).toHaveBeenCalled();
+    expect(await screen.findByRole('dialog')).toBeInTheDocument();
+    expect(screen.getByText('Delete Routine')).toBeInTheDocument();
+
+    // Routine should still exist
     expect(await db.routines.get('routine-morning')).toBeTruthy();
+  });
+
+  it('deletes the routine when confirmation is given', async () => {
+    await seedDatabase();
+
+    renderWithProviders(
+      <MemoryRouter initialEntries={['/routines/routine-morning']}>
+        <Routes>
+          <Route path="/routines/:routineId" element={<RoutineWorkspace />} />
+          <Route path="/routines" element={<div>Routines Page</div>} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await userEvent.click(await screen.findByRole('button', { name: /delete routine/i }));
+    await userEvent.click(await screen.findByRole('button', { name: 'Confirm' }));
+
+    await waitFor(async () => {
+      expect(await db.routines.get('routine-morning')).toBeUndefined();
+    });
+    expect(screen.getByText('Routines Page')).toBeInTheDocument();
+  });
+
+  it('does not delete the routine when confirmation is cancelled', async () => {
+    await seedDatabase();
+
+    renderWithProviders(
+      <MemoryRouter initialEntries={['/routines/routine-morning']}>
+        <Routes>
+          <Route path="/routines/:routineId" element={<RoutineWorkspace />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await userEvent.click(await screen.findByRole('button', { name: /delete routine/i }));
+    await userEvent.click(await screen.findByRole('button', { name: 'Cancel' }));
+
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(await db.routines.get('routine-morning')).toBeTruthy();
+  });
+
+  it('shows the title input when the edit button is clicked', async () => {
+    await seedDatabase();
+
+    renderWithProviders(
+      <MemoryRouter initialEntries={['/routines/routine-morning']}>
+        <Routes>
+          <Route path="/routines/:routineId" element={<RoutineWorkspace />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await userEvent.click(await screen.findByRole('button', { name: /edit title/i }));
+
+    expect(await screen.findByLabelText('Routine title')).toBeInTheDocument();
+  });
+
+  it('creates a new category when the "New Category" button is clicked', async () => {
+    await seedDatabase();
+    const createCategorySpy = vi.spyOn(categoriesRepository, 'createCategory');
+
+    renderWithProviders(
+      <MemoryRouter initialEntries={['/routines/routine-morning']}>
+        <Routes>
+          <Route path="/routines/:routineId" element={<RoutineWorkspace />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await userEvent.click(await screen.findByRole('button', { name: /new category/i }));
+
+    expect(createCategorySpy).toHaveBeenCalledWith('routine-morning', 'Category 3', 2);
+  });
+
+  it('shows an unsaved-changes dialog when canceling a new draft', async () => {
+    renderWithProviders(
+      <MemoryRouter initialEntries={['/routines/new']}>
+        <Routes>
+          <Route path="/routines/:routineId" element={<RoutineWorkspace />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await userEvent.type(await screen.findByLabelText('Routine title'), 'Evening Reset');
+    await userEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+
+    expect(await screen.findByRole('dialog')).toBeInTheDocument();
+    expect(screen.getByText('Save before leaving?')).toBeInTheDocument();
+  });
+
+  it('saves a new draft when confirming save-before-leave', async () => {
+    renderWithProviders(
+      <MemoryRouter initialEntries={['/routines/new']}>
+        <Routes>
+          <Route path="/routines/:routineId" element={<RoutineWorkspace />} />
+          <Route path="/routines" element={<div>Routines Page</div>} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await userEvent.type(await screen.findByLabelText('Routine title'), 'Evening Reset');
+    await userEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+    await userEvent.click(await screen.findByRole('button', { name: 'Save' }));
+
+    await waitFor(async () => {
+      const created = (await db.routines.toArray()).filter((routine) => routine.title === 'Evening Reset');
+      expect(created.length).toBeGreaterThan(0);
+    });
+  });
+
+  it('discards a new draft when leaving without saving', async () => {
+    renderWithProviders(
+      <MemoryRouter initialEntries={['/routines/new']}>
+        <Routes>
+          <Route path="/routines/:routineId" element={<RoutineWorkspace />} />
+          <Route path="/routines" element={<div>Routines Page</div>} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await userEvent.type(await screen.findByLabelText('Routine title'), 'Discard Me');
+    await userEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+    await userEvent.click(await screen.findByRole('button', { name: 'Leave without saving' }));
+
+    await waitFor(async () => {
+      const discarded = (await db.routines.toArray()).filter((routine) => routine.title === 'Discard Me');
+      expect(discarded.length).toBe(0);
+    });
   });
 });

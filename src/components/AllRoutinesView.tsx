@@ -1,6 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { createRoutine, updateRoutine } from '../repositories/routinesRepository';
-import { createCategory } from '../repositories/categoriesRepository';
+import { updateRoutine } from '../repositories/routinesRepository';
 import type { RoutineRecord } from '../db/schema';
 
 interface AllRoutinesViewProps {
@@ -13,9 +12,7 @@ export function AllRoutinesView({ routines }: AllRoutinesViewProps) {
   const pausedRoutines = routines.filter((routine) => routine.status === 'paused');
 
   async function handleCreateRoutine() {
-    const routine = await createRoutine('New Routine');
-    await createCategory(routine.id, 'First Category', 0);
-    navigate(`/routines/${routine.id}`);
+    navigate('/routines/new');
   }
 
   return (

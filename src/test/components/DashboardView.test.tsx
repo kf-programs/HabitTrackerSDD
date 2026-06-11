@@ -6,11 +6,15 @@ import { renderWithProviders } from '../utils';
 import { DashboardView } from '../../components/DashboardView';
 import type { RoutineRecord } from '../../db/schema';
 
-const createRoutineMock = vi.fn();
+const navigateMock = vi.fn();
 
-vi.mock('../../repositories/routinesRepository', () => ({
-  createRoutine: (...args: unknown[]) => createRoutineMock(...args),
-}));
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual('react-router-dom');
+  return {
+    ...actual,
+    useNavigate: () => navigateMock,
+  };
+});
 
 function makeRoutine(overrides: Partial<RoutineRecord>): RoutineRecord {
   return {
@@ -35,13 +39,11 @@ describe('DashboardView', () => {
     );
 
     expect(document.body.textContent).toMatch(/Good morning|Good afternoon|Good evening/);
-    expect(document.body.textContent).toContain('No active routines yet');
+    expect(screen.getByRole('heading', { name: 'Create your first routine' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Create your first routine' })).toBeInTheDocument();
   });
 
-  it('creates a new routine from the empty state action', () => {
-    createRoutineMock.mockResolvedValue({ id: 'new-routine' });
-
+  it('navigates to the draft routine flow from the empty state action', () => {
     renderWithProviders(
       <MemoryRouter>
         <DashboardView routines={[]} />
@@ -50,10 +52,10 @@ describe('DashboardView', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Create your first routine' }));
 
-    expect(createRoutineMock).toHaveBeenCalledWith('New Routine');
+    expect(navigateMock).toHaveBeenCalledWith('/routines/new');
   });
 
-  it('shows recent active routines only and caps list to three', () => {
+  it('shows recent active routines and a create button', () => {
     const routines: RoutineRecord[] = [
       makeRoutine({ id: 'r-1', title: 'Newest', status: 'active', lastAccessedAt: '2026-06-09T10:00:00.000Z' }),
       makeRoutine({ id: 'r-2', title: 'Second', status: 'active', lastAccessedAt: '2026-06-09T09:00:00.000Z' }),
@@ -74,5 +76,6 @@ describe('DashboardView', () => {
     expect(document.body.textContent).toContain('Third');
     expect(document.body.textContent).not.toContain('Too Old');
     expect(document.body.textContent).not.toContain('Paused');
+    expect(screen.getByRole('button', { name: 'Create routine' })).toBeInTheDocument();
   });
 });

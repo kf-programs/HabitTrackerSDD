@@ -1,5 +1,5 @@
 import React from 'react';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { fireEvent, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { renderWithProviders } from '../utils';
@@ -7,11 +7,18 @@ import { AllRoutinesView } from '../../components/AllRoutinesView';
 import type { RoutineRecord } from '../../db/schema';
 
 const updateRoutineMock = vi.fn();
-const createRoutineMock = vi.fn();
+const navigateMock = vi.fn();
+
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual('react-router-dom');
+  return {
+    ...actual,
+    useNavigate: () => navigateMock,
+  };
+});
 
 vi.mock('../../repositories/routinesRepository', () => ({
   updateRoutine: (...args: unknown[]) => updateRoutineMock(...args),
-  createRoutine: (...args: unknown[]) => createRoutineMock(...args),
 }));
 
 function makeRoutine(overrides: Partial<RoutineRecord>): RoutineRecord {
@@ -27,6 +34,10 @@ function makeRoutine(overrides: Partial<RoutineRecord>): RoutineRecord {
 }
 
 describe('AllRoutinesView', () => {
+  beforeEach(() => {
+    vi.resetAllMocks();
+  });
+
   it('segments routines into active and paused groups', () => {
     renderWithProviders(
       <MemoryRouter>
@@ -66,8 +77,6 @@ describe('AllRoutinesView', () => {
   });
 
   it('offers a create routine action', async () => {
-    createRoutineMock.mockResolvedValue({ id: 'new-routine' });
-
     renderWithProviders(
       <MemoryRouter>
         <AllRoutinesView routines={[]} />
@@ -76,6 +85,6 @@ describe('AllRoutinesView', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Create routine' }));
 
-    expect(createRoutineMock).toHaveBeenCalledWith('New Routine');
+    expect(navigateMock).toHaveBeenCalledWith('/routines/new');
   });
 });

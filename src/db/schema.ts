@@ -17,6 +17,7 @@ export interface CategoryRecord {
   id: string;
   routineId: string;
   name: string;
+  description?: string;
   orderIndex: number;
   isExpandedDefault: boolean;
   createdAt: string;
