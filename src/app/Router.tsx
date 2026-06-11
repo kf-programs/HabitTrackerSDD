@@ -5,7 +5,6 @@ import { AllRoutinesView } from '../components/AllRoutinesView';
 import { RoutineWorkspace } from '../components/RoutineWorkspace';
 import { ImportRouteView } from '../components/ImportRouteView';
 import type { RoutineRecord } from '../db/schema';
-import { CalmingBackground } from '../components/CalmingBackgroud';
 
 interface RouterProps {
   routines: RoutineRecord[];
@@ -13,10 +12,8 @@ interface RouterProps {
 
 export function Router({ routines }: RouterProps) {
   return (
-    <div className="min-h-screen bg-paper text-ink">
-      
+    <div className="relative z-10 min-h-screen text-ink">
       <main className="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-4 pb-24 pt-6 sm:px-6 lg:px-8">
-        <CalmingBackground />
         <Routes>
           <Route path="/" element={<DashboardView routines={routines} />} />
           <Route path="/routines" element={<AllRoutinesView routines={routines} />} />

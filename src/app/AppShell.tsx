@@ -5,6 +5,7 @@ import { Router } from './Router';
 import { seedDatabase } from '../db/seed';
 import { listRoutines } from '../repositories/routinesRepository';
 import { isOfflineStartup } from '../services/offlineCache';
+import { CalmingBackground } from '../components/CalmingBackgroud';
 
 export function AppShell() {
   const [isOffline, setIsOffline] = useState(isOfflineStartup());
@@ -30,12 +31,15 @@ export function AppShell() {
 
   return (
     <BrowserRouter>
-      {isOffline ? (
-        <div className="mx-auto mt-4 w-full max-w-6xl rounded-2xl bg-butter/80 px-4 py-3 text-sm text-ink/80 shadow-soft">
-          Offline mode: local data is available and changes will stay on this device.
-        </div>
-      ) : null}
-      <Router routines={routines} />
+      <CalmingBackground />
+      <div className="relative z-10">
+        {isOffline ? (
+          <div className="mx-auto mt-4 w-full max-w-6xl rounded-2xl bg-butter/80 px-4 py-3 text-sm text-ink/80 shadow-soft">
+            Offline mode: local data is available and changes will stay on this device.
+          </div>
+        ) : null}
+        <Router routines={routines} />
+      </div>
     </BrowserRouter>
   );
 }
