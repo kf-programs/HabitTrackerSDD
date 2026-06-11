@@ -156,7 +156,7 @@ describe('RoutineWorkspace interactions', () => {
       </MemoryRouter>
     );
 
-    await userEvent.click(await screen.findByRole('button', { name: /edit title/i }));
+    await userEvent.click(await screen.findByRole('button', { name: /edit routine details/i }));
 
     expect(await screen.findByLabelText('Routine title')).toBeInTheDocument();
   });

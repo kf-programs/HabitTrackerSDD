@@ -24,15 +24,14 @@ export function BottomNavBar() {
         <NavLink to="/" className={linkClass} aria-label="Home view" end>
           Home
         </NavLink>
+        <NavLink to="/routines" className={linkClass} aria-label="All routines view" end>
+          All Routines
+        </NavLink>
         {routine ? (
           <NavLink to={`/routines/${routine.id}`} className={linkClass} aria-label={routine.title}>
             {routine.title}
           </NavLink>
-        ) : (
-          <NavLink to="/routines" className={linkClass} aria-label="All routines view">
-            All Routines
-          </NavLink>
-        )}
+        ) : null}
       </div>
     </nav>
   );

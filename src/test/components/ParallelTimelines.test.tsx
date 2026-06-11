@@ -44,8 +44,12 @@ describe('Timeline layout', () => {
     );
 
     const items = document.querySelectorAll('[role="listitem"]');
-    expect(items[0]?.className).toContain('h-4');
-    expect(items[0]?.className).toContain('w-4');
+    expect(items[0]?.className).toContain('h-full');
+    expect(items[0]?.className).toContain('w-full');
+
+    const timeline = document.querySelector('[role="list"]');
+    expect((timeline as HTMLElement | null)?.style.gridTemplateRows).toContain('1.25rem');
+    expect((timeline as HTMLElement | null)?.style.gridTemplateColumns).toContain('1.25rem');
 
     const weeklyPill = document.querySelector('[data-shape="weekly-pill"]');
     expect(weeklyPill).toBeTruthy();

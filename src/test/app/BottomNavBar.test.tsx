@@ -36,12 +36,15 @@ describe('BottomNavBar', () => {
     await seedDatabase();
     renderWithRouter(['/routines/routine-morning']);
 
+    const routinesLink = screen.getByRole('link', { name: 'All routines view' });
     const routineLink = await screen.findByRole('link', { name: 'Morning Ritual' });
+
+    expect(routinesLink).toBeInTheDocument();
     expect(routineLink).toBeInTheDocument();
     expect(routineLink).toHaveClass('bg-ink text-paper');
 
     const homeLink = screen.getByRole('link', { name: 'Home view' });
     expect(homeLink).not.toHaveClass('bg-ink text-paper');
-    expect(screen.queryByRole('link', { name: 'All routines view' })).toBeNull();
+    expect(routinesLink).not.toHaveClass('bg-ink text-paper');
   });
 });
