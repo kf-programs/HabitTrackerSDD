@@ -33,6 +33,7 @@ export interface HabitRecord {
   trackingType: HabitTrackingType;
   measurementUnit?: string;
   status: HabitStatus;
+  deletedAt?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -41,6 +42,8 @@ export interface EntryRecord {
   id: string;
   habitId: string;
   timeframe: HabitTimeframe;
+  // Daily records use logDate semantics while preserving the existing periodKey model.
+  logDate?: string;
   periodKey: string;
   valueType: 'boolean' | 'integer' | 'string';
   boolValue?: boolean;

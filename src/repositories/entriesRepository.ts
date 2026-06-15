@@ -1,5 +1,6 @@
 import { db } from '../db/client';
 import type { EntryRecord } from '../db/schema';
+import { getDayKey } from '../utils/dateBoundaries';
 
 export async function listEntriesForHabit(habitId: string) {
   return db.entries.where('habitId').equals(habitId).toArray();
@@ -33,10 +34,26 @@ export async function upsertEntry(input: Omit<EntryRecord, 'id' | 'recordedAt'>)
 
   const entry: EntryRecord = {
     ...input,
+    logDate: input.timeframe === 'daily' ? getDayKey(new Date(`${input.periodKey}T12:00:00`)) : undefined,
     id: existing?.id || crypto.randomUUID(),
     recordedAt: new Date().toISOString(),
   };
 
-  await saveEntry(entry);
+  try {
+    await saveEntry(entry);
+  } catch (error) {
+    if (error instanceof Error && error.message.includes('ConstraintError')) {
+      const conflict = await getEntryForPeriod(input.habitId, input.periodKey);
+      if (conflict) {
+        const patched: EntryRecord = {
+          ...entry,
+          id: conflict.id,
+        };
+        await saveEntry(patched);
+        return patched;
+      }
+    }
+    throw error;
+  }
   return entry;
 }

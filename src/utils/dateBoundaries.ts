@@ -45,3 +45,17 @@ export function getRollingWeekKeys(count: number, today = new Date()) {
 
   return keys;
 }
+
+export function parseDayKey(dayKey: string) {
+  return new Date(`${dayKey}T12:00:00`);
+}
+
+export function shiftDayKey(dayKey: string, offsetDays: number) {
+  const date = parseDayKey(dayKey);
+  date.setDate(date.getDate() + offsetDays);
+  return getDayKey(date);
+}
+
+export function compareDayKeys(a: string, b: string) {
+  return parseDayKey(a).getTime() - parseDayKey(b).getTime();
+}

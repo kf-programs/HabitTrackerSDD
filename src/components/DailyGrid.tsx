@@ -6,6 +6,7 @@ interface DailyGridProps {
   weeklyTiles: TimelineTileSnapshot[];
   startLabel: string;
   endLabel: string;
+  selectedDayKey: string;
 }
 
 const DAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Week'];
@@ -58,10 +59,11 @@ function getWeekColumns(dailyTiles: TimelineTileSnapshot[], weeklyTiles: Timelin
   return columns;
 }
 
-export function DailyGrid({ dailyTiles, weeklyTiles, startLabel, endLabel }: DailyGridProps) {
+export function DailyGrid({ dailyTiles, weeklyTiles, startLabel, endLabel, selectedDayKey }: DailyGridProps) {
   const weekColumns = getWeekColumns(dailyTiles, weeklyTiles);
   const tilesByDay = new Map(dailyTiles.map((tile) => [tile.periodKey, tile]));
   const weeklyByKey = new Map(weeklyTiles.map((tile) => [tile.periodKey, tile]));
+  const selectedWeekKey = `${formatDayKey(getWeekStart(selectedDayKey))}-SUN`;
 
   return (
     <section className="space-y-2">
@@ -115,6 +117,8 @@ export function DailyGrid({ dailyTiles, weeklyTiles, startLabel, endLabel }: Dai
                       return <div key={`weekly-${weeklyKey}`} aria-hidden="true" className="h-full w-full rounded-full bg-transparent" />;
                     }
 
+                    const isSelectedWeek = weeklyKey === selectedWeekKey;
+
                     return (
                       <div
                         key={tile.periodKey}
@@ -122,7 +126,7 @@ export function DailyGrid({ dailyTiles, weeklyTiles, startLabel, endLabel }: Dai
                         data-shape="weekly-pill"
                         aria-label={`${tile.periodKey} ${tile.completed ? 'completed' : 'not completed'}`}
                         title={tile.periodKey}
-                        className={`h-full w-full rounded-full ${tile.completed ? getPastelClassName(tile.pastelToken) : 'bg-black/10'} transition-colors`}
+                        className={`h-full w-full rounded-full ${tile.completed ? getPastelClassName(tile.pastelToken) : 'bg-black/10'} ${isSelectedWeek ? 'ring-2 ring-ink/35' : ''} transition-colors`}
                       />
                     );
                   }
@@ -142,7 +146,7 @@ export function DailyGrid({ dailyTiles, weeklyTiles, startLabel, endLabel }: Dai
                       role="listitem"
                       aria-label={`${tile.periodKey} ${tile.completed ? 'completed' : 'not completed'}`}
                       title={tile.periodKey}
-                      className={`h-full w-full rounded-md ${tile.completed ? getPastelClassName(tile.pastelToken) : 'bg-black/10'} transition-colors`}
+                      className={`h-full w-full rounded-md ${tile.completed ? getPastelClassName(tile.pastelToken) : 'bg-black/10'} ${tile.periodKey === selectedDayKey ? 'ring-2 ring-ink/35' : ''} transition-colors`}
                     />
                   );
                 }),

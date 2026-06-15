@@ -9,6 +9,15 @@ export interface TimelineTileSnapshot {
   pastelToken: PastelToken;
 }
 
+export interface SelectedDateChecklistItem {
+  habit: HabitRecord;
+  entry?: EntryRecord;
+  completed: boolean;
+  numericValue?: number;
+  textValue?: string;
+  fallbackApplied: boolean;
+}
+
 function isCompletedEntry(entry: EntryRecord) {
   if (entry.valueType === 'boolean') {
     return entry.boolValue === true;
@@ -97,4 +106,48 @@ export function buildWeeklyTimeline(input: BuildTimelineInput, existingTiles: Ti
   });
 
   return mergeTimelineTiles(existingTiles, generated);
+}
+
+export function buildSelectedDateChecklistItems(
+  habits: HabitRecord[],
+  entries: EntryRecord[],
+  selectedDate = new Date(),
+): SelectedDateChecklistItem[] {
+  return habits.map((habit) => {
+    const periodKey = getPeriodKeyForHabit(habit, selectedDate);
+    const entry = entries.find((candidate) => candidate.habitId === habit.id && candidate.periodKey === periodKey);
+
+    if (!entry) {
+      return {
+        habit,
+        completed: false,
+        fallbackApplied: false,
+      } satisfies SelectedDateChecklistItem;
+    }
+
+    const isTypeMismatch =
+      (habit.trackingType === 'yesno' && entry.valueType !== 'boolean')
+      || (habit.trackingType === 'counter' && entry.valueType !== 'integer')
+      || (habit.trackingType === 'measurement' && entry.valueType !== 'string');
+
+    if (isTypeMismatch) {
+      return {
+        habit,
+        entry,
+        completed: true,
+        numericValue: undefined,
+        textValue: undefined,
+        fallbackApplied: true,
+      } satisfies SelectedDateChecklistItem;
+    }
+
+    return {
+      habit,
+      entry,
+      completed: isCompletedEntry(entry),
+      numericValue: entry.intValue,
+      textValue: entry.textValue,
+      fallbackApplied: false,
+    } satisfies SelectedDateChecklistItem;
+  });
 }
