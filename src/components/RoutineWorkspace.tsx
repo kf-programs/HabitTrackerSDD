@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Pencil, Trash2 } from 'lucide-react';
 import { CategoryAccordion } from './CategoryAccordion';
 import { ParallelTimelines } from './ParallelTimelines';
 import { HabitRow } from './HabitRow';
+import { RoutineJournalEditor } from './RoutineJournalEditor';
 import ConfirmationDialog from './modals/ConfirmationDialog';
 import { createRoutine, getRoutineById, updateRoutine, deleteRoutine } from '../repositories/routinesRepository';
 import {
@@ -16,9 +17,13 @@ import { listHabitsForRoutineOnDate, createHabit, updateHabit } from '../reposit
 import { db } from '../db/client';
 import { buildSelectedDateChecklistItems, getPeriodKeyForHabit } from '../services/timelineService';
 import { upsertEntry } from '../repositories/entriesRepository';
+import { getRoutineJournalEntry, upsertRoutineJournalEntry } from '../repositories/routineJournalRepository';
 import { exportRoutineStructure } from '../services/sharingService';
 import type { HabitRecord, HabitTimeframe, HabitTrackingType } from '../db/schema';
 import { getDayKey } from '../utils/dateBoundaries';
+
+const JOURNAL_MAX_LENGTH = 2000;
+export const JOURNAL_AUTOSAVE_DEBOUNCE_MS = 600;
 
 export function RoutineWorkspace() {
   const { routineId, selectedDayKey: selectedDayKeyParam } = useParams();
@@ -33,6 +38,10 @@ export function RoutineWorkspace() {
   const [isLeaveDialogOpen, setIsLeaveDialogOpen] = useState(false);
   const [pendingPath, setPendingPath] = useState<string | null>(null);
   const [selectedDayKey, setSelectedDayKey] = useState(selectedDayKeyParam ?? getDayKey());
+  const [journalDraft, setJournalDraft] = useState('');
+  const [persistedJournalText, setPersistedJournalText] = useState('');
+  const [isJournalSaving, setIsJournalSaving] = useState(false);
+  const [journalError, setJournalError] = useState('');
   const skipBlockRef = useRef(false);
 
   useEffect(() => {
@@ -83,6 +92,14 @@ export function RoutineWorkspace() {
     const records = await db.entries.where('habitId').anyOf(habitIds).toArray();
     return records.filter((entry) => possiblePeriodKeys.has(entry.periodKey));
   }, [habits, selectedDayKey], []);
+
+  const journalEntry = useLiveQuery(async () => {
+    if (!routineId || isCreatingNew) {
+      return undefined;
+    }
+
+    return getRoutineJournalEntry(routineId, selectedDayKey);
+  }, [routineId, isCreatingNew, selectedDayKey]);
 
   const habitsByCategory = useMemo(() => {
     const grouped = habits.reduce<Record<string, HabitRecord[]>>((acc, habit) => {
@@ -169,6 +186,95 @@ export function RoutineWorkspace() {
   const checklistByHabitId = useMemo(() => {
     return new Map(checklistItems.map((item) => [item.habit.id, item]));
   }, [checklistItems]);
+
+  useEffect(() => {
+    if (isCreatingNew || !routineId) {
+      setJournalDraft('');
+      setPersistedJournalText('');
+      setJournalError('');
+      return;
+    }
+
+    const nextText = journalEntry?.text ?? '';
+    setJournalDraft(nextText);
+    setPersistedJournalText(nextText);
+    setJournalError('');
+  }, [isCreatingNew, journalEntry?.text, routineId, selectedDayKey]);
+
+  const saveJournalDraft = useCallback(
+    async (override?: { routineId?: string; dayKey?: string; text?: string }) => {
+      const resolvedRoutineId = override?.routineId ?? (isCreatingNew ? undefined : routineId);
+      const resolvedDayKey = override?.dayKey ?? selectedDayKey;
+      const resolvedText = (override?.text ?? journalDraft).slice(0, JOURNAL_MAX_LENGTH);
+
+      if (!resolvedRoutineId) {
+        return true;
+      }
+
+      if (resolvedText === persistedJournalText && !override) {
+        return true;
+      }
+
+      setIsJournalSaving(true);
+
+      try {
+        const saved = await upsertRoutineJournalEntry({
+          routineId: resolvedRoutineId,
+          dayKey: resolvedDayKey,
+          text: resolvedText,
+        });
+
+        if (resolvedRoutineId === routineId && resolvedDayKey === selectedDayKey) {
+          setPersistedJournalText(saved.text);
+          setJournalDraft(saved.text);
+        }
+
+        setJournalError('');
+        return true;
+      } catch (error) {
+        setJournalError(error instanceof Error ? error.message : 'Unable to save journal right now.');
+        return false;
+      } finally {
+        setIsJournalSaving(false);
+      }
+    },
+    [isCreatingNew, journalDraft, persistedJournalText, routineId, selectedDayKey],
+  );
+
+  useEffect(() => {
+    if (isCreatingNew || !routineId) {
+      return;
+    }
+
+    if (journalDraft === persistedJournalText) {
+      return;
+    }
+
+    const timer = window.setTimeout(() => {
+      void saveJournalDraft();
+    }, JOURNAL_AUTOSAVE_DEBOUNCE_MS);
+
+    return () => window.clearTimeout(timer);
+  }, [isCreatingNew, journalDraft, persistedJournalText, routineId, saveJournalDraft]);
+
+  async function handleSelectedDayKeyChange(nextDayKey: string) {
+    if (nextDayKey === selectedDayKey) {
+      return;
+    }
+
+    // Flush current-day draft before switching contexts to keep writes date-scoped.
+    const didSave = await saveJournalDraft({
+      routineId: isCreatingNew ? undefined : routineId,
+      dayKey: selectedDayKey,
+      text: journalDraft,
+    });
+
+    if (!didSave) {
+      return;
+    }
+
+    setSelectedDayKey(nextDayKey);
+  }
 
   async function handleSaveHabitValue(habit: HabitRecord, value: boolean | number | string) {
     const periodKey = getPeriodKeyForHabit(habit, new Date(`${selectedDayKey}T12:00:00`));
@@ -447,7 +553,19 @@ export function RoutineWorkspace() {
         <ParallelTimelines
           routineId={activeRoutineId}
           selectedDayKey={selectedDayKey}
-          onSelectedDayKeyChange={setSelectedDayKey}
+          onSelectedDayKeyChange={handleSelectedDayKeyChange}
+        />
+      ) : null}
+      {!isCreatingNew && activeRoutineId ? (
+        <RoutineJournalEditor
+          value={journalDraft}
+          maxLength={JOURNAL_MAX_LENGTH}
+          isSaving={isJournalSaving}
+          errorMessage={journalError}
+          onChange={setJournalDraft}
+          onBlur={() => {
+            void saveJournalDraft();
+          }}
         />
       ) : null}
       {categories.map((category, index) => (

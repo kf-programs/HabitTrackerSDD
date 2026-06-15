@@ -52,3 +52,12 @@ export interface EntryRecord {
   recordedAt: string;
   source: 'user' | 'import';
 }
+
+export interface RoutineJournalEntryRecord {
+  id: string;
+  routineId: string;
+  dayKey: string;
+  text: string;
+  createdAt: string;
+  updatedAt: string;
+}

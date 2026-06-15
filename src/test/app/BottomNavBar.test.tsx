@@ -1,10 +1,28 @@
 import React from 'react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { render, screen } from '@testing-library/react';
 import { BottomNavBar } from '../../app/BottomNavBar';
-import { seedDatabase } from '../../db/seed';
-import { RoutineWorkspace } from '../../components/RoutineWorkspace';
+
+vi.mock('../../repositories/routinesRepository', async () => {
+  const actual = await vi.importActual<typeof import('../../repositories/routinesRepository')>(
+    '../../repositories/routinesRepository',
+  );
+
+  return {
+    ...actual,
+    getRoutineById: vi.fn(async (routineId: string) => {
+      if (routineId !== 'routine-morning') {
+        return null;
+      }
+
+      return {
+        id: 'routine-morning',
+        title: 'Morning Ritual',
+      } as never;
+    }),
+  };
+});
 
 const renderWithRouter = (initialEntries: string[]) => {
   return render(
@@ -12,7 +30,7 @@ const renderWithRouter = (initialEntries: string[]) => {
       <Routes>
         <Route path="/" element={<div>Home Page</div>} />
         <Route path="/routines" element={<div>All Routines Page</div>} />
-        <Route path="/routines/:routineId" element={<RoutineWorkspace />} />
+        <Route path="/routines/:routineId" element={<div>Routine Workspace</div>} />
       </Routes>
       <BottomNavBar />
     </MemoryRouter>
@@ -33,7 +51,6 @@ describe('BottomNavBar', () => {
   });
 
   it('shows and highlights the routine name when on a routine workspace page', async () => {
-    await seedDatabase();
     renderWithRouter(['/routines/routine-morning']);
 
     const routinesLink = screen.getByRole('link', { name: 'All routines view' });

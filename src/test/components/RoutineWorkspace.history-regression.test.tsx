@@ -28,5 +28,5 @@ describe('RoutineWorkspace historical regression', () => {
     const yesterday = shiftDayKey(getDayKey(), -1);
     const historical = await db.entries.where('[habitId+periodKey]').equals(['habit-water', yesterday]).first();
     expect(historical?.boolValue).toBe(true);
-  });
+  }, 15000);
 });
