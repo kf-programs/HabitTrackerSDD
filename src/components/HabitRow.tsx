@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { HabitTimeframe, HabitTrackingType } from '../db/schema';
 
 interface HabitRowProps {
@@ -9,6 +9,7 @@ interface HabitRowProps {
   initialBoolean?: boolean;
   initialInteger?: number;
   initialText?: string;
+  fallbackApplied?: boolean;
   onSave: (habitId: string, value: boolean | number | string) => Promise<void>;
   onRenameHabit?: (habitId: string, title: string) => Promise<void>;
 }
@@ -21,6 +22,7 @@ export function HabitRow({
   initialBoolean,
   initialInteger,
   initialText,
+  fallbackApplied = false,
   onSave,
   onRenameHabit,
 }: HabitRowProps) {
@@ -32,6 +34,13 @@ export function HabitRow({
   const [completed, setCompleted] = useState(initialBoolean ?? false);
   const [isEditing, setIsEditing] = useState(true);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    setCount(initialInteger ?? 0);
+    setValue(initialText ?? '');
+    setCompleted(initialBoolean ?? false);
+    setIsEditing(true);
+  }, [initialBoolean, initialInteger, initialText]);
 
   async function saveTitle() {
     const nextTitle = titleDraft.trim();
@@ -124,6 +133,9 @@ export function HabitRow({
         ) : null}
 
         {trackingType === 'counter' ? (
+          fallbackApplied ? (
+            <div className="rounded-full bg-sage px-4 py-2 text-sm font-medium">Done (legacy value)</div>
+          ) : (
           <div className="flex items-center gap-2">
             <button
               type="button"
@@ -149,6 +161,7 @@ export function HabitRow({
               +
             </button>
           </div>
+          )
         ) : null}
 
         {trackingType === 'measurement' ? (
@@ -171,6 +184,7 @@ export function HabitRow({
           )
         ) : null}
       </div>
+      {fallbackApplied ? <p className="mt-2 text-xs text-ink/60">Historical fallback applied for incompatible legacy value.</p> : null}
       {error ? <p className="mt-2 text-xs text-red-600">{error}</p> : null}
     </div>
   );

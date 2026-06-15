@@ -23,6 +23,7 @@ describe('Timeline layout', () => {
         ]}
         startLabel="Jun 1, 2026"
         endLabel="Jun 14, 2026"
+        selectedDayKey="2026-06-09"
       />,
     );
 
@@ -40,6 +41,7 @@ describe('Timeline layout', () => {
         weeklyTiles={[{ periodKey: '2026-05-31-SUN', completed: true, pastelToken: 'mist-2' }]}
         startLabel="Jun 1, 2026"
         endLabel="Jun 14, 2026"
+        selectedDayKey="2026-06-07"
       />,
     );
 

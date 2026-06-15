@@ -30,6 +30,13 @@ export class MindfulRoutineDatabase extends Dexie {
       habits: 'id, routineId, categoryId, timeframe, trackingType, status, updatedAt',
       entries: 'id, habitId, timeframe, periodKey, [habitId+periodKey], recordedAt',
     });
+
+    this.version(4).stores({
+      routines: 'id, status, lastAccessedAt, updatedAt',
+      categories: 'id, routineId, orderIndex, updatedAt',
+      habits: 'id, routineId, categoryId, timeframe, trackingType, status, deletedAt, createdAt, updatedAt',
+      entries: 'id, habitId, timeframe, periodKey, &[habitId+periodKey], recordedAt',
+    });
   }
 }
 

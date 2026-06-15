@@ -12,15 +12,16 @@ import {
   updateCategory,
   createCategory,
 } from '../repositories/categoriesRepository';
-import { listHabitsForRoutine, createHabit, updateHabit } from '../repositories/habitsRepository';
+import { listHabitsForRoutineOnDate, createHabit, updateHabit } from '../repositories/habitsRepository';
 import { db } from '../db/client';
-import { getPeriodKeyForHabit } from '../services/timelineService';
+import { buildSelectedDateChecklistItems, getPeriodKeyForHabit } from '../services/timelineService';
 import { upsertEntry } from '../repositories/entriesRepository';
 import { exportRoutineStructure } from '../services/sharingService';
 import type { HabitRecord, HabitTimeframe, HabitTrackingType } from '../db/schema';
+import { getDayKey } from '../utils/dateBoundaries';
 
 export function RoutineWorkspace() {
-  const { routineId } = useParams();
+  const { routineId, selectedDayKey: selectedDayKeyParam } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
   const isCreatingNew = routineId === 'new';
@@ -31,6 +32,7 @@ export function RoutineWorkspace() {
   const [isConfirmDeleteDialogOpen, setIsConfirmDeleteDialogOpen] = useState(false);
   const [isLeaveDialogOpen, setIsLeaveDialogOpen] = useState(false);
   const [pendingPath, setPendingPath] = useState<string | null>(null);
+  const [selectedDayKey, setSelectedDayKey] = useState(selectedDayKeyParam ?? getDayKey());
   const skipBlockRef = useRef(false);
 
   useEffect(() => {
@@ -42,6 +44,14 @@ export function RoutineWorkspace() {
   useEffect(() => {
     skipBlockRef.current = false;
   }, [location.pathname]);
+
+  useEffect(() => {
+    if (!selectedDayKeyParam) {
+      return;
+    }
+
+    setSelectedDayKey(selectedDayKeyParam);
+  }, [selectedDayKeyParam]);
 
   const routine = useLiveQuery(async () => {
     if (!routineId || isCreatingNew) return undefined;
@@ -55,10 +65,24 @@ export function RoutineWorkspace() {
 
   const habits = useLiveQuery(async () => {
     if (!routineId || isCreatingNew) return [];
-    return listHabitsForRoutine(routineId);
-  }, [routineId, isCreatingNew], []);
+    return listHabitsForRoutineOnDate(routineId, selectedDayKey);
+  }, [routineId, isCreatingNew, selectedDayKey], []);
 
-  const entries = useLiveQuery(async () => db.entries.toArray(), [], []);
+  const entries = useLiveQuery(async () => {
+    if (habits.length === 0) {
+      return [];
+    }
+
+    const habitIds = habits.map((habit) => habit.id);
+    const possiblePeriodKeys = new Set<string>();
+
+    habits.forEach((habit) => {
+      possiblePeriodKeys.add(getPeriodKeyForHabit(habit, new Date(`${selectedDayKey}T12:00:00`)));
+    });
+
+    const records = await db.entries.where('habitId').anyOf(habitIds).toArray();
+    return records.filter((entry) => possiblePeriodKeys.has(entry.periodKey));
+  }, [habits, selectedDayKey], []);
 
   const habitsByCategory = useMemo(() => {
     const grouped = habits.reduce<Record<string, HabitRecord[]>>((acc, habit) => {
@@ -137,16 +161,17 @@ export function RoutineWorkspace() {
     return () => document.removeEventListener('click', handleDocumentClick, true);
   }, [isRoutineMetaDirty, location.pathname]);
 
-  const entryMap = useMemo(() => {
-    const map = new Map<string, typeof entries[number]>();
-    entries.forEach((entry) => {
-      map.set(`${entry.habitId}:${entry.periodKey}`, entry);
-    });
-    return map;
-  }, [entries]);
+  const checklistItems = useMemo(
+    () => buildSelectedDateChecklistItems(habits, entries, new Date(`${selectedDayKey}T12:00:00`)),
+    [habits, entries, selectedDayKey],
+  );
+
+  const checklistByHabitId = useMemo(() => {
+    return new Map(checklistItems.map((item) => [item.habit.id, item]));
+  }, [checklistItems]);
 
   async function handleSaveHabitValue(habit: HabitRecord, value: boolean | number | string) {
-    const periodKey = getPeriodKeyForHabit(habit, new Date());
+    const periodKey = getPeriodKeyForHabit(habit, new Date(`${selectedDayKey}T12:00:00`));
     await upsertEntry({
       habitId: habit.id,
       timeframe: habit.timeframe,
@@ -418,7 +443,13 @@ export function RoutineWorkspace() {
         </section>
       ) : null}
 
-      {!isCreatingNew && activeRoutineId ? <ParallelTimelines routineId={activeRoutineId} /> : null}
+      {!isCreatingNew && activeRoutineId ? (
+        <ParallelTimelines
+          routineId={activeRoutineId}
+          selectedDayKey={selectedDayKey}
+          onSelectedDayKeyChange={setSelectedDayKey}
+        />
+      ) : null}
       {categories.map((category, index) => (
         <CategoryAccordion
           key={category.id}
@@ -430,8 +461,8 @@ export function RoutineWorkspace() {
           onCreateHabit={handleCreateHabit}
         >
           {(habitsByCategory[category.id] ?? []).map((habit) => {
-            const periodKey = getPeriodKeyForHabit(habit, new Date());
-            const entry = entryMap.get(`${habit.id}:${periodKey}`);
+            const item = checklistByHabitId.get(habit.id);
+            const entry = item?.entry;
 
             return (
               <HabitRow
@@ -440,9 +471,10 @@ export function RoutineWorkspace() {
                 title={habit.title}
                 trackingType={habit.trackingType}
                 timeframe={habit.timeframe}
-                initialBoolean={entry?.boolValue}
-                initialInteger={entry?.intValue}
-                initialText={entry?.textValue}
+                initialBoolean={item?.completed ?? entry?.boolValue}
+                initialInteger={item?.numericValue ?? entry?.intValue}
+                initialText={item?.textValue ?? entry?.textValue}
+                fallbackApplied={item?.fallbackApplied}
                 onSave={(_, value) => handleSaveHabitValue(habit, value)}
                 onRenameHabit={handleRenameHabit}
               />

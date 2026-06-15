@@ -17,7 +17,7 @@ export function Router({ routines }: RouterProps) {
         <Routes>
           <Route path="/" element={<DashboardView routines={routines} />} />
           <Route path="/routines" element={<AllRoutinesView routines={routines} />} />
-          <Route path="/routines/:routineId" element={<RoutineWorkspace />} />
+          <Route path="/routines/:routineId/:selectedDayKey?" element={<RoutineWorkspace />} />
           <Route path="/import" element={<ImportRouteView />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

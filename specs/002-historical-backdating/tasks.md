@@ -12,11 +12,11 @@
 
 **Purpose**: Prepare baseline artifacts and test scaffolding for historical-date behavior.
 
-- [ ] T001 Align feature-level quickstart workflow in specs/002-historical-backdating/quickstart.md
-- [ ] T002 Add normalized historical-date helper coverage scaffolding in src/test/utils.ts
-- [ ] T003 [P] Add repository test fixture builders for habit lifecycle windows in src/test/utils.ts
-- [ ] T004 [P] Add date-navigation component test harness setup in src/test/components/RoutineWorkspace.test.tsx
-- [ ] T005 [P] Add repository contract test harness for habit/date composite-key scenarios in src/test/repositories/entriesRepository.test.ts
+- [X] T001 Align feature-level quickstart workflow in specs/002-historical-backdating/quickstart.md
+- [X] T002 Add normalized historical-date helper coverage scaffolding in src/test/utils.ts
+- [X] T003 [P] Add repository test fixture builders for habit lifecycle windows in src/test/utils.ts
+- [X] T004 [P] Add date-navigation component test harness setup in src/test/components/RoutineWorkspace.test.tsx
+- [X] T005 [P] Add repository contract test harness for habit/date composite-key scenarios in src/test/repositories/entriesRepository.test.ts
 
 ---
 
@@ -26,12 +26,12 @@
 
 **⚠️ CRITICAL**: No user story work begins until this phase is complete.
 
-- [ ] T006 Add habit deletion lifecycle field migration support in src/db/schema.ts
-- [ ] T007 [P] Update seed compatibility for deleted lifecycle fields in src/db/seed.ts
-- [ ] T008 Enforce composite habitId+logDate uniqueness access path in src/repositories/entriesRepository.ts
-- [ ] T009 [P] Extend habit lifecycle query primitives for date-window filtering in src/repositories/habitsRepository.ts
-- [ ] T010 [P] Add normalized selected-date boundary utilities in src/utils/dateBoundaries.ts
-- [ ] T011 Add shared selected-date read model types for fallback metadata in src/services/timelineService.ts
+- [X] T006 Add habit deletion lifecycle field migration support in src/db/schema.ts
+- [X] T007 [P] Update seed compatibility for deleted lifecycle fields in src/db/seed.ts
+- [X] T008 Enforce composite habitId+logDate uniqueness access path in src/repositories/entriesRepository.ts
+- [X] T009 [P] Extend habit lifecycle query primitives for date-window filtering in src/repositories/habitsRepository.ts
+- [X] T010 [P] Add normalized selected-date boundary utilities in src/utils/dateBoundaries.ts
+- [X] T011 Add shared selected-date read model types for fallback metadata in src/services/timelineService.ts
 
 **Checkpoint**: Foundation complete. User stories can now be implemented.
 
@@ -45,16 +45,16 @@
 
 ### Tests for User Story 1 (MANDATORY)
 
-- [ ] T012 [P] [US1] Add date-switch rendering test for selected-date checklist in src/test/components/RoutineWorkspace.historical-navigation.test.tsx
-- [ ] T013 [P] [US1] Add repository test for selected-date habit visibility query in src/test/repositories/habitsRepository.date-filter.test.ts
+- [X] T012 [P] [US1] Add date-switch rendering test for selected-date checklist in src/test/components/RoutineWorkspace.historical-navigation.test.tsx
+- [X] T013 [P] [US1] Add repository test for selected-date habit visibility query in src/test/repositories/habitsRepository.date-filter.test.ts
 
 ### Implementation for User Story 1
 
-- [ ] T014 [P] [US1] Add selectedDate state and navigation actions in src/components/RoutineWorkspace.tsx
-- [ ] T015 [P] [US1] Implement selected-date habit fetch API in src/repositories/habitsRepository.ts
-- [ ] T016 [US1] Integrate selected-date checklist data flow in src/components/DailyGrid.tsx
-- [ ] T017 [US1] Wire selected-date navigation controls and bounds behavior in src/components/ParallelTimelines.tsx
-- [ ] T018 [US1] Connect selected-date route/view state handling in src/app/Router.tsx
+- [X] T014 [P] [US1] Add selectedDate state and navigation actions in src/components/RoutineWorkspace.tsx
+- [X] T015 [P] [US1] Implement selected-date habit fetch API in src/repositories/habitsRepository.ts
+- [X] T016 [US1] Integrate selected-date checklist data flow in src/components/DailyGrid.tsx
+- [X] T017 [US1] Wire selected-date navigation controls and bounds behavior in src/components/ParallelTimelines.tsx
+- [X] T018 [US1] Connect selected-date route/view state handling in src/app/Router.tsx
 
 **Checkpoint**: User Story 1 is independently functional and testable.
 
@@ -68,15 +68,15 @@
 
 ### Tests for User Story 2 (MANDATORY)
 
-- [ ] T019 [P] [US2] Add repository upsert idempotency test for repeated same-day writes in src/test/repositories/entriesRepository.idempotent.test.ts
-- [ ] T020 [P] [US2] Add repeated-interaction UI state test for same-day updates in src/test/components/HabitRow.idempotent-updates.test.tsx
+- [X] T019 [P] [US2] Add repository upsert idempotency test for repeated same-day writes in src/test/repositories/entriesRepository.idempotent.test.ts
+- [X] T020 [P] [US2] Add repeated-interaction UI state test for same-day updates in src/test/components/HabitRow.idempotent-updates.test.tsx
 
 ### Implementation for User Story 2
 
-- [ ] T021 [P] [US2] Implement upsert-by-(habitId,logDate) write path in src/repositories/entriesRepository.ts
-- [ ] T022 [P] [US2] Route daily save orchestration through upsert service flow in src/services/timelineService.ts
-- [ ] T023 [US2] Update habit interaction handlers to use idempotent save semantics in src/components/HabitRow.tsx
-- [ ] T024 [US2] Ensure workspace refresh/state reconciliation after repeated writes in src/components/RoutineWorkspace.tsx
+- [X] T021 [P] [US2] Implement upsert-by-(habitId,logDate) write path in src/repositories/entriesRepository.ts
+- [X] T022 [P] [US2] Route daily save orchestration through upsert service flow in src/services/timelineService.ts
+- [X] T023 [US2] Update habit interaction handlers to use idempotent save semantics in src/components/HabitRow.tsx
+- [X] T024 [US2] Ensure workspace refresh/state reconciliation after repeated writes in src/components/RoutineWorkspace.tsx
 
 **Checkpoint**: User Stories 1 and 2 both work independently.
 
@@ -90,16 +90,16 @@
 
 ### Tests for User Story 3 (MANDATORY)
 
-- [ ] T025 [P] [US3] Add soft-delete lifecycle repository test for historical retention in src/test/repositories/habitsRepository.soft-delete.test.ts
-- [ ] T026 [P] [US3] Add date-window visibility component test for deleted habits in src/test/components/DailyGrid.deletion-window.test.tsx
-- [ ] T040 [P] [US3] Add rename-and-criteria-update linkage test to verify historical records remain bound to the same habit identity in src/test/repositories/habitsRepository.rename-history-linkage.test.ts
+- [X] T025 [P] [US3] Add soft-delete lifecycle repository test for historical retention in src/test/repositories/habitsRepository.soft-delete.test.ts
+- [X] T026 [P] [US3] Add date-window visibility component test for deleted habits in src/test/components/DailyGrid.deletion-window.test.tsx
+- [X] T040 [P] [US3] Add rename-and-criteria-update linkage test to verify historical records remain bound to the same habit identity in src/test/repositories/habitsRepository.rename-history-linkage.test.ts
 
 ### Implementation for User Story 3
 
-- [ ] T027 [P] [US3] Implement soft-delete mutation and lifecycle fields in src/repositories/habitsRepository.ts
-- [ ] T028 [P] [US3] Preserve habit identity linkage during rename/edit flows in src/components/CategoryAccordion.tsx
-- [ ] T029 [US3] Implement date-valid habit filtering (active OR deleted-after-date) in src/repositories/habitsRepository.ts
-- [ ] T030 [US3] Merge lifecycle-filtered habits with same-day records in src/services/timelineService.ts
+- [X] T027 [P] [US3] Implement soft-delete mutation and lifecycle fields in src/repositories/habitsRepository.ts
+- [X] T028 [P] [US3] Preserve habit identity linkage during rename/edit flows in src/components/CategoryAccordion.tsx
+- [X] T029 [US3] Implement date-valid habit filtering (active OR deleted-after-date) in src/repositories/habitsRepository.ts
+- [X] T030 [US3] Merge lifecycle-filtered habits with same-day records in src/services/timelineService.ts
 
 **Checkpoint**: User Stories 1-3 are independently functional and testable.
 
@@ -113,14 +113,14 @@
 
 ### Tests for User Story 4 (MANDATORY)
 
-- [ ] T031 [P] [US4] Add cross-date checklist style continuity test in src/test/components/DailyGrid.visual-continuity.test.tsx
-- [ ] T032 [P] [US4] Add mismatched-value fallback rendering test in src/test/components/HabitRow.type-mismatch-fallback.test.tsx
+- [X] T031 [P] [US4] Add cross-date checklist style continuity test in src/test/components/DailyGrid.visual-continuity.test.tsx
+- [X] T032 [P] [US4] Add mismatched-value fallback rendering test in src/test/components/HabitRow.type-mismatch-fallback.test.tsx
 
 ### Implementation for User Story 4
 
-- [ ] T033 [P] [US4] Implement fallback projection metadata mapping in src/services/timelineService.ts
-- [ ] T034 [US4] Render checkbox-complete/no-numeric fallback state in src/components/HabitRow.tsx
-- [ ] T035 [US4] Apply unified checklist completion styling across selected dates in src/components/DailyGrid.tsx
+- [X] T033 [P] [US4] Implement fallback projection metadata mapping in src/services/timelineService.ts
+- [X] T034 [US4] Render checkbox-complete/no-numeric fallback state in src/components/HabitRow.tsx
+- [X] T035 [US4] Apply unified checklist completion styling across selected dates in src/components/DailyGrid.tsx
 
 **Checkpoint**: All user stories are independently functional.
 
@@ -130,11 +130,11 @@
 
 **Purpose**: Final hardening across all stories.
 
-- [ ] T036 [P] Add end-to-end historical regression component test in src/test/components/RoutineWorkspace.history-regression.test.tsx
-- [ ] T037 [P] Add service-level merge/fallback regression test in src/test/services/timelineService.historical-read.test.ts
-- [ ] T038 Update manual validation checklist with final verification outcomes in specs/002-historical-backdating/quickstart.md
-- [ ] T039 Add concise non-obvious logic comments for fallback merge behavior in src/services/timelineService.ts
-- [ ] T041 Add selected-date navigation/render performance validation for <=1s p95 target in src/test/components/RoutineWorkspace.performance.test.tsx
+- [X] T036 [P] Add end-to-end historical regression component test in src/test/components/RoutineWorkspace.history-regression.test.tsx
+- [X] T037 [P] Add service-level merge/fallback regression test in src/test/services/timelineService.historical-read.test.ts
+- [X] T038 Update manual validation checklist with final verification outcomes in specs/002-historical-backdating/quickstart.md
+- [X] T039 Add concise non-obvious logic comments for fallback merge behavior in src/services/timelineService.ts
+- [X] T041 Add selected-date navigation/render performance validation for <=1s p95 target in src/test/components/RoutineWorkspace.performance.test.tsx
 
 ---
 
