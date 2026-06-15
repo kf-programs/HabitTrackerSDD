@@ -14,6 +14,10 @@
 
 - Q: What is the canonical fallback policy for historical type-mismatched numeric records? -> A: Render as completed checkbox for that historical day and do not show a counter value for that record.
 
+## Architectural Approach
+
+Use a state-based entity-relationship model for daily progress. For each habit on each calendar day, progress is represented as one mutable state record rather than append-only duplicate log lines.
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Navigate and Log Past Days (Priority: P1)
@@ -102,6 +106,11 @@ Users see a consistent checklist presentation on any selected date, with clear c
 - **FR-011**: System MUST ensure historical date rendering includes both habit presence and logged values as they existed for that date.
 - **FR-012**: System MUST prevent duplicate historical lines for the same habit/day even under repeated or rapid user updates.
 - **FR-013**: System MUST degrade gracefully when historical record values are incompatible with the current habit tracking type by rendering affected records as completed checkbox state and hiding counter values for those records.
+- **FR-014**: System MUST model daily logging with a unique habit/date identity so each habit has at most one mutable state per calendar day.
+- **FR-015**: System MUST include habit deletion lifecycle tracking in habit definitions (for example, deleted timestamp or equivalent deletion flag) and MUST use soft deletion for habit removal.
+- **FR-016**: System MUST enforce a composite uniqueness constraint on habit identifier plus normalized log date for daily records.
+- **FR-017**: System MUST implement save/log interactions as idempotent upsert operations keyed by habit identifier and log date.
+- **FR-018**: System MUST build checklist views for a selected date by merging date-valid habit definitions with records for that same date using habit identifier matching.
 
 ### Engineering Constraints *(mandatory)*
 
@@ -116,10 +125,23 @@ Users see a consistent checklist presentation on any selected date, with clear c
 
 ### Key Entities *(include if feature involves data)*
 
-- **Habit**: A user-defined routine item with stable identity, descriptive metadata, lifecycle status, and activation/deactivation dates.
+- **Habit**: A user-defined routine item with stable identity, descriptive metadata, lifecycle status, activation/deactivation dates, and deletion lifecycle tracking.
 - **Habit Daily State**: The single source of truth for one habit on one calendar day, including completion state and optional numeric measurements.
 - **Habit Lifecycle Window**: The effective date span during which a habit is considered active for checklist rendering on selected dates.
 - **Selected Date Context**: The currently viewed calendar day that scopes all visible checklist items and edits.
+
+### Entity Structural Requirements
+
+- Habit definition data MUST include a deletion tracking property so active list membership can change without removing historical continuity.
+- Habit daily records MUST include a parent habit identifier and normalized day value.
+- Habit daily records MUST support both completion state and numeric state fields for tracking modes.
+- Daily record storage MUST enforce composite uniqueness on (habit identifier, log date).
+
+### Core Logical Operations
+
+1. Idempotent Save/Log Upsert: Find the daily record by unique habit/date key; update it when found, create it when absent.
+2. Habit Soft Delete: Mark habit definition deletion lifecycle state and remove from current/future active lists without physically deleting historical records.
+3. Date-Scoped Read/Merge: For a selected date, retrieve habits valid for that date (active or deleted after the selected day), retrieve records for that date, and merge by habit identifier to render filled vs empty checklist state.
 
 ## Success Criteria *(mandatory)*
 
@@ -131,6 +153,7 @@ Users see a consistent checklist presentation on any selected date, with clear c
 - **SC-004**: In usability checks, at least 90% of participants correctly identify completed vs incomplete items on historical dates without additional guidance.
 - **SC-005**: After rename or criteria updates, 100% of historical logs remain associated with the same habit identity in progression views.
 - **SC-006**: In compatibility tests with legacy or mismatched historical values, 100% of affected days render without crashes and display the defined checkbox-complete fallback (without counter value display).
+- **SC-007**: In data integrity tests, 100% of repeated save operations for the same habit/date produce exactly one persisted daily record with final-state values.
 
 ## Assumptions
 

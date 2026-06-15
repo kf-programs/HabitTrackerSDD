@@ -1,6 +1,6 @@
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
-shell commands, and other important information, read specs/001-mindful-routine-tracker/plan.md
+shell commands, and other important information, read specs/002-historical-backdating/plan.md
 <!-- SPECKIT END -->
 
 ## Engineering Standards

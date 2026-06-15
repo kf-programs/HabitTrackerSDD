@@ -33,3 +33,4 @@
 
 - Content validation excludes the mandatory Engineering Constraints section, which intentionally captures repository-level implementation standards.
 - Spec explicitly covers graceful fallback behavior for legacy or type-mismatched historical values.
+- Spec explicitly adopts a state-based ER model with soft-delete lifecycle semantics, habit/date composite uniqueness, and idempotent upsert behavior.
