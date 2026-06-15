@@ -45,9 +45,7 @@ export function RoutineWorkspace() {
   const skipBlockRef = useRef(false);
 
   useEffect(() => {
-    if (isCreatingNew) {
-      setIsEditingRoutineMeta(true);
-    }
+    setIsEditingRoutineMeta(isCreatingNew);
   }, [isCreatingNew]);
 
   useEffect(() => {

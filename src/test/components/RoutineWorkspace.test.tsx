@@ -233,4 +233,24 @@ describe('RoutineWorkspace interactions', () => {
       expect(discarded.length).toBe(0);
     });
   });
+
+  it('opens a created routine in view mode with persisted title and description', async () => {
+    renderWithProviders(
+      <MemoryRouter initialEntries={['/routines/new']}>
+        <Routes>
+          <Route path="/routines/:routineId" element={<RoutineWorkspace />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    await userEvent.type(await screen.findByLabelText('Routine title'), 'Morning Flow');
+    await userEvent.type(screen.getByLabelText('Routine description'), 'Gentle start to the day');
+    await userEvent.click(screen.getByRole('button', { name: 'Create' }));
+
+    await screen.findByRole('heading', { name: 'Morning Flow' });
+
+    expect(screen.queryByLabelText('Routine title')).toBeNull();
+    expect(screen.getByText('Gentle start to the day')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /edit routine details/i })).toBeInTheDocument();
+  });
 });
