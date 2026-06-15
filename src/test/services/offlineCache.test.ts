@@ -3,9 +3,19 @@ import { isOfflineStartup, registerServiceWorker } from '../../services/offlineC
 
 describe('offlineCache service', () => {
   it('registers service worker when available', async () => {
-    const register = vi.fn().mockResolvedValue({});
+    const update = vi.fn().mockResolvedValue(undefined);
+    const register = vi.fn().mockResolvedValue({
+      update,
+      waiting: null,
+      addEventListener: vi.fn(),
+      installing: null,
+    });
     Object.defineProperty(navigator, 'serviceWorker', {
-      value: { register },
+      value: {
+        register,
+        addEventListener: vi.fn(),
+        controller: null,
+      },
       configurable: true,
     });
 
@@ -13,6 +23,7 @@ describe('offlineCache service', () => {
 
     expect(result).toBe(true);
     expect(register).toHaveBeenCalledWith('/sw.js');
+    expect(update).toHaveBeenCalledTimes(1);
   });
 
   it('returns false when registration fails', async () => {
