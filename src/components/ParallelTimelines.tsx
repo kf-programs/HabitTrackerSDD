@@ -60,11 +60,6 @@ export function ParallelTimelines({ routineId, selectedDayKey, onSelectedDayKeyC
   const canGoBack = compareDayKeys(selectedDayKey, earliestDayKey) > 0;
   const canGoForward = compareDayKeys(selectedDayKey, todayKey) < 0;
 
-  const selectedLabel = useMemo(
-    () => new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric', year: 'numeric' }).format(new Date(`${selectedDayKey}T12:00:00`)),
-    [selectedDayKey],
-  );
-
   return (
     <section className="max-w-xl mx-auto space-y-4 rounded-3xl bg-white/80 p-5 shadow-soft">
       <div className="flex items-center justify-between rounded-2xl bg-black/5 px-3 py-2 text-sm">
@@ -77,7 +72,25 @@ export function ParallelTimelines({ routineId, selectedDayKey, onSelectedDayKeyC
         >
           Prev
         </button>
-        <p className="font-medium text-ink/80">{selectedLabel}</p>
+        <label className="flex items-center gap-2 text-xs font-medium text-ink/65" htmlFor="timeline-day-picker">
+          Date
+          <input
+            id="timeline-day-picker"
+            type="date"
+            aria-label="Selected day"
+            min={earliestDayKey}
+            max={todayKey}
+            value={selectedDayKey}
+            onChange={(event) => {
+              if (!event.target.value) {
+                return;
+              }
+
+              onSelectedDayKeyChange(event.target.value);
+            }}
+            className="rounded-full border border-black/10 bg-white px-3 py-1 text-sm text-ink/80"
+          />
+        </label>
         <div className="flex items-center gap-2">
           <button
             type="button"
@@ -111,6 +124,9 @@ export function ParallelTimelines({ routineId, selectedDayKey, onSelectedDayKeyC
           selectedDayKey={selectedDayKey}
         />
       ) : null}
+      <p className="rounded-2xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-900/80">
+        Your habit data is private and stored only on this device. Clearing browser storage, reinstalling the app, or using a different browser/device can permanently remove your history.
+      </p>
     </section>
   );
 }

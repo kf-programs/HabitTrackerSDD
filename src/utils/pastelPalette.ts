@@ -20,22 +20,22 @@ const PALETTE = [
 export type PastelToken = (typeof PALETTE)[number];
 
 const tokenClasses: Record<PastelToken, string> = {
-  'blush-1': 'bg-blush/80',
-  'blush-2': 'bg-blush/60',
-  'sage-1': 'bg-sage/80',
-  'sage-2': 'bg-sage/60',
-  'mist-1': 'bg-mist/80',
-  'mist-2': 'bg-mist/50',
-  'butter-1': 'bg-butter/80',
-  'butter-2': 'bg-butter/60',
-  'peach-1': 'bg-blush/70',
-  'peach-2': 'bg-blush/50',
-  'lavender-1': 'bg-mist/70',
-  'lavender-2': 'bg-mist/60',
-  'mint-1': 'bg-sage/70',
-  'mint-2': 'bg-sage/55',
-  'sky-1': 'bg-mist/75',
-  'sky-2': 'bg-mist/65',
+  'blush-1': 'bg-rose-200',
+  'blush-2': 'bg-pink-200',
+  'sage-1': 'bg-emerald-200',
+  'sage-2': 'bg-green-200',
+  'mist-1': 'bg-cyan-200',
+  'mist-2': 'bg-sky-200',
+  'butter-1': 'bg-amber-200',
+  'butter-2': 'bg-yellow-200',
+  'peach-1': 'bg-orange-200',
+  'peach-2': 'bg-amber-200',
+  'lavender-1': 'bg-violet-200',
+  'lavender-2': 'bg-fuchsia-200',
+  'mint-1': 'bg-teal-200',
+  'mint-2': 'bg-lime-200',
+  'sky-1': 'bg-blue-200',
+  'sky-2': 'bg-indigo-200',
 };
 
 const tokenContrast: Record<PastelToken, { iconContrast: number; backgroundContrast: number }> = {
