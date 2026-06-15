@@ -1,6 +1,6 @@
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
-shell commands, and other important information, read specs/003-daily-journal-entries/plan.md
+shell commands, and other important information, read specs/004-habit-goal-completion/plan.md
 <!-- SPECKIT END -->
 
 ## Engineering Standards

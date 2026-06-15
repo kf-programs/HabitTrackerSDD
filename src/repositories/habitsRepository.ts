@@ -2,6 +2,16 @@ import { db } from '../db/client';
 import type { HabitRecord } from '../db/schema';
 import { compareDayKeys, getDayKey } from '../utils/dateBoundaries';
 
+function validateCounterGoal(goalValue?: number) {
+  if (goalValue === undefined) {
+    return;
+  }
+
+  if (!Number.isInteger(goalValue)) {
+    throw new Error('Counter goal must be an integer value.');
+  }
+}
+
 function getNow() {
   return new Date().toISOString();
 }
@@ -15,6 +25,8 @@ export async function saveHabit(habit: HabitRecord) {
 }
 
 export async function createHabit(input: Omit<HabitRecord, 'id' | 'createdAt' | 'updatedAt' | 'status'>) {
+  validateCounterGoal(input.counterGoalValue);
+
   const now = new Date().toISOString();
   const habit: HabitRecord = {
     ...input,
@@ -29,11 +41,21 @@ export async function createHabit(input: Omit<HabitRecord, 'id' | 'createdAt' | 
   return habit;
 }
 
-export async function updateHabit(habitId: string, updates: Partial<Pick<HabitRecord, 'title' | 'timeframe' | 'trackingType' | 'measurementUnit' | 'status'>>) {
+export async function updateHabit(
+  habitId: string,
+  updates: Partial<Pick<HabitRecord, 'title' | 'timeframe' | 'trackingType' | 'measurementUnit' | 'status' | 'counterGoalOperator' | 'counterGoalValue'>>,
+) {
+  validateCounterGoal(updates.counterGoalValue);
+
   const nextUpdates: Partial<HabitRecord> = {
     ...updates,
     updatedAt: getNow(),
   };
+
+  if (updates.trackingType && updates.trackingType !== 'counter') {
+    nextUpdates.counterGoalOperator = undefined;
+    nextUpdates.counterGoalValue = undefined;
+  }
 
   if (updates.status === 'deleted') {
     nextUpdates.deletedAt = getNow();

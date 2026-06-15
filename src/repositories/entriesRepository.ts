@@ -25,11 +25,18 @@ export async function getEntryForPeriod(habitId: string, periodKey: string) {
   return db.entries.where('[habitId+periodKey]').equals([habitId, periodKey]).first();
 }
 
+export async function deleteEntryForHabitPeriod(habitId: string, periodKey: string) {
+  const existing = await getEntryForPeriod(habitId, periodKey);
+  if (existing) {
+    await db.entries.delete(existing.id);
+  }
+}
+
 export async function upsertEntry(input: Omit<EntryRecord, 'id' | 'recordedAt'>) {
   const existing = await getEntryForPeriod(input.habitId, input.periodKey);
 
-  if (input.timeframe === 'weekly' && input.valueType === 'boolean' && existing?.boolValue === true) {
-    return existing;
+  if (input.valueType === 'integer' && input.intValue !== undefined && !Number.isInteger(input.intValue)) {
+    throw new Error('Counter value must be an integer.');
   }
 
   const entry: EntryRecord = {

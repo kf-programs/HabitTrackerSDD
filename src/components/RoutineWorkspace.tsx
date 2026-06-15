@@ -16,7 +16,7 @@ import {
 import { listHabitsForRoutineOnDate, createHabit, updateHabit } from '../repositories/habitsRepository';
 import { db } from '../db/client';
 import { buildSelectedDateChecklistItems, getPeriodKeyForHabit } from '../services/timelineService';
-import { upsertEntry } from '../repositories/entriesRepository';
+import { deleteEntryForHabitPeriod, upsertEntry } from '../repositories/entriesRepository';
 import { getRoutineJournalEntry, upsertRoutineJournalEntry } from '../repositories/routineJournalRepository';
 import { exportRoutineStructure } from '../services/sharingService';
 import type { HabitRecord, HabitTimeframe, HabitTrackingType } from '../db/schema';
@@ -290,6 +290,11 @@ export function RoutineWorkspace() {
     });
   }
 
+  async function handleClearHabitEntry(habit: HabitRecord) {
+    const periodKey = getPeriodKeyForHabit(habit, new Date(`${selectedDayKey}T12:00:00`));
+    await deleteEntryForHabitPeriod(habit.id, periodKey);
+  }
+
   async function handleRenameCategory(categoryId: string, input: { name: string; description?: string }) {
     await updateCategory(categoryId, {
       name: input.name,
@@ -303,7 +308,10 @@ export function RoutineWorkspace() {
     await createCategory(routineId, newCategoryName, categories.length);
   }
 
-  async function handleCreateHabit(categoryId: string, input: { title: string; timeframe: HabitTimeframe; trackingType: HabitTrackingType }) {
+  async function handleCreateHabit(
+    categoryId: string,
+    input: { title: string; timeframe: HabitTimeframe; trackingType: HabitTrackingType; counterGoalOperator?: HabitRecord['counterGoalOperator']; counterGoalValue?: number },
+  ) {
     if (!routineId) return;
 
     await createHabit({
@@ -313,11 +321,17 @@ export function RoutineWorkspace() {
       timeframe: input.timeframe,
       trackingType: input.trackingType,
       measurementUnit: input.trackingType === 'measurement' ? 'value' : undefined,
+      counterGoalOperator: input.counterGoalOperator,
+      counterGoalValue: input.counterGoalValue,
     });
   }
 
   async function handleRenameHabit(habitId: string, title: string) {
     await updateHabit(habitId, { title });
+  }
+
+  async function handleUpdateCounterGoal(habitId: string, counterGoalOperator: HabitRecord['counterGoalOperator'], counterGoalValue: number) {
+    await updateHabit(habitId, { counterGoalOperator, counterGoalValue });
   }
 
   async function handleShareRoutine() {
@@ -592,9 +606,14 @@ export function RoutineWorkspace() {
                 initialBoolean={item?.completed ?? entry?.boolValue}
                 initialInteger={item?.numericValue ?? entry?.intValue}
                 initialText={item?.textValue ?? entry?.textValue}
+                counterGoalOperator={habit.counterGoalOperator}
+                counterGoalValue={habit.counterGoalValue}
+                hasEntry={Boolean(entry)}
                 fallbackApplied={item?.fallbackApplied}
                 onSave={(_, value) => handleSaveHabitValue(habit, value)}
                 onRenameHabit={handleRenameHabit}
+                onUpdateCounterGoal={handleUpdateCounterGoal}
+                onClearEntry={() => handleClearHabitEntry(habit)}
               />
             );
           })}

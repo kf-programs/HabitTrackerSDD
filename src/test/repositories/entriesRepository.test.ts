@@ -54,6 +54,19 @@ describe('entriesRepository save failure handling', () => {
     expect(first.id).toBe(second.id);
   });
 
+  it('rejects non-integer counter values', async () => {
+    await expect(
+      upsertEntry({
+        habitId: 'habit-1',
+        timeframe: 'daily',
+        periodKey: '2026-06-09',
+        valueType: 'integer',
+        intValue: 1.5,
+        source: 'user',
+      }),
+    ).rejects.toThrow('Counter value must be an integer.');
+  });
+
   it('reads records by compound habit/period key', async () => {
     await upsertEntry({
       habitId: 'habit-lookup',

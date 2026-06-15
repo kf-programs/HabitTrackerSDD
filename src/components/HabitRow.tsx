@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import type { HabitTimeframe, HabitTrackingType } from '../db/schema';
+import type { CounterGoalOperator, HabitTimeframe, HabitTrackingType } from '../db/schema';
 
 interface HabitRowProps {
   habitId: string;
@@ -9,9 +9,15 @@ interface HabitRowProps {
   initialBoolean?: boolean;
   initialInteger?: number;
   initialText?: string;
+  counterGoalOperator?: CounterGoalOperator;
+  counterGoalValue?: number;
   fallbackApplied?: boolean;
   onSave: (habitId: string, value: boolean | number | string) => Promise<void>;
   onRenameHabit?: (habitId: string, title: string) => Promise<void>;
+  onUpdateCounterGoal?: (habitId: string, operator: CounterGoalOperator, goalValue: number) => Promise<void>;
+  // True when a persisted entry already exists for this habit/period.
+  hasEntry?: boolean;
+  onClearEntry?: (habitId: string) => Promise<void>;
 }
 
 export function HabitRow({
@@ -22,25 +28,81 @@ export function HabitRow({
   initialBoolean,
   initialInteger,
   initialText,
+  counterGoalOperator,
+  counterGoalValue,
+  hasEntry = false,
   fallbackApplied = false,
   onSave,
   onRenameHabit,
+  onUpdateCounterGoal,
+  onClearEntry,
 }: HabitRowProps) {
   const [habitTitle, setHabitTitle] = useState(title);
   const [titleDraft, setTitleDraft] = useState(title);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
-  const [count, setCount] = useState(initialInteger ?? 0);
+  const [counterDraft, setCounterDraft] = useState((initialInteger ?? 0).toString());
+  const [configuredGoalOperator, setConfiguredGoalOperator] = useState<CounterGoalOperator | undefined>(counterGoalOperator);
+  const [isSet, setIsSet] = useState(hasEntry);
+
+  const [configuredGoalValue, setConfiguredGoalValue] = useState<number | undefined>(counterGoalValue);
+  const [isEditingGoal, setIsEditingGoal] = useState(false);
+  const [goalOperatorDraft, setGoalOperatorDraft] = useState<CounterGoalOperator>(counterGoalOperator ?? 'gt');
+  const [goalValueDraft, setGoalValueDraft] = useState(counterGoalValue?.toString() ?? '');
   const [value, setValue] = useState(initialText ?? '');
   const [completed, setCompleted] = useState(initialBoolean ?? false);
   const [isEditing, setIsEditing] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    setCount(initialInteger ?? 0);
+    setCounterDraft((initialInteger ?? 0).toString());
     setValue(initialText ?? '');
     setCompleted(initialBoolean ?? false);
     setIsEditing(true);
   }, [initialBoolean, initialInteger, initialText]);
+
+  useEffect(() => {
+    setIsSet(hasEntry);
+  }, [hasEntry]);
+
+  useEffect(() => {
+    setConfiguredGoalOperator(counterGoalOperator);
+    setConfiguredGoalValue(counterGoalValue);
+    setGoalOperatorDraft(counterGoalOperator ?? 'gt');
+    setGoalValueDraft(counterGoalValue?.toString() ?? '');
+  }, [counterGoalOperator, counterGoalValue]);
+
+  function renderGoalSummary() {
+    if (!configuredGoalOperator || configuredGoalValue === undefined) {
+      return 'Goal not configured';
+    }
+
+    const symbol = configuredGoalOperator === 'gt' ? '>' : configuredGoalOperator === 'lt' ? '<' : '=';
+    return `Goal: ${symbol} ${configuredGoalValue}`;
+  }
+
+  async function saveCounterGoal() {
+    if (!onUpdateCounterGoal) {
+      setIsEditingGoal(false);
+      return;
+    }
+
+    const parsed = Number(goalValueDraft);
+    if (!Number.isInteger(parsed)) {
+      setError('Counter goal must be an integer.');
+      return;
+    }
+
+    try {
+      setError('');
+      await onUpdateCounterGoal(habitId, goalOperatorDraft, parsed);
+      setConfiguredGoalOperator(goalOperatorDraft);
+      setConfiguredGoalValue(parsed);
+      setIsEditingGoal(false);
+    } catch (saveError) {
+      const message = saveError instanceof Error ? saveError.message : 'Unable to save right now. Please retry.';
+      setError(message);
+    }
+  }
 
   async function saveTitle() {
     const nextTitle = titleDraft.trim();
@@ -67,10 +129,28 @@ export function HabitRow({
     try {
       setError('');
       await onSave(habitId, nextValue);
+      return true;
     } catch (saveError) {
       const message = saveError instanceof Error ? saveError.message : 'Unable to save right now. Please retry.';
       setError(message);
+      return false;
     }
+  }
+
+  function evaluateCounterCompletion(nextValue: number) {
+    if (!configuredGoalOperator || configuredGoalValue === undefined) {
+      return false;
+    }
+
+    if (configuredGoalOperator === 'gt') {
+      return nextValue > configuredGoalValue;
+    }
+
+    if (configuredGoalOperator === 'lt') {
+      return nextValue < configuredGoalValue;
+    }
+
+    return nextValue === configuredGoalValue;
   }
 
   return (
@@ -118,17 +198,13 @@ export function HabitRow({
           <button
             type="button"
             onClick={async () => {
-              if (timeframe === 'weekly' && completed) {
-                return;
-              }
-
               const next = !completed;
               setCompleted(next);
               await saveValue(next);
             }}
             className={`rounded-full px-4 py-2 text-sm font-medium ${completed ? 'bg-sage' : 'bg-white'}`}
           >
-            {completed ? (timeframe === 'weekly' ? 'Done this week' : 'Done') : 'Mark complete'}
+            {completed ? 'Mark incomplete' : timeframe === 'weekly' ? 'Mark done this week' : 'Mark complete'}
           </button>
         ) : null}
 
@@ -136,31 +212,135 @@ export function HabitRow({
           fallbackApplied ? (
             <div className="rounded-full bg-sage px-4 py-2 text-sm font-medium">Done (legacy value)</div>
           ) : (
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={async () => {
-                const next = Math.max(0, count - 1);
-                setCount(next);
-                await saveValue(next);
-              }}
-              className="rounded-full bg-white px-3 py-2 text-sm"
-            >
-              −
-            </button>
-            <span className="min-w-8 text-center font-semibold">{count}</span>
-            <button
-              type="button"
-              onClick={async () => {
-                const next = count + 1;
-                setCount(next);
-                await saveValue(next);
-              }}
-              className="rounded-full bg-white px-3 py-2 text-sm"
-            >
-              +
-            </button>
-          </div>
+            <div className="space-y-2">
+              <p className="text-xs text-ink/60">{renderGoalSummary()}</p>
+              {isEditingGoal ? (
+                <div className="flex flex-wrap items-center gap-2">
+                  <select
+                    aria-label="Edit counter goal operator"
+                    value={goalOperatorDraft}
+                    onChange={(event) => setGoalOperatorDraft(event.target.value as CounterGoalOperator)}
+                    className="rounded-full border border-black/10 bg-white px-3 py-1 text-sm"
+                  >
+                    <option value="gt">Greater than</option>
+                    <option value="lt">Less than</option>
+                    <option value="eq">Equal to</option>
+                  </select>
+                  <input
+                    aria-label="Edit counter goal value"
+                    value={goalValueDraft}
+                    onChange={(event) => setGoalValueDraft(event.target.value)}
+                    className="w-28 rounded-full border border-black/10 bg-white px-3 py-1 text-sm outline-none"
+                    inputMode="numeric"
+                  />
+                  <button type="button" onClick={() => void saveCounterGoal()} className="rounded-full bg-ink px-3 py-1 text-xs font-medium text-paper">
+                    Save goal
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setGoalOperatorDraft(configuredGoalOperator ?? 'gt');
+                      setGoalValueDraft(configuredGoalValue?.toString() ?? '');
+                      setIsEditingGoal(false);
+                    }}
+                    className="rounded-full bg-black/5 px-3 py-1 text-xs font-medium"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setIsEditingGoal(true)}
+                  className="rounded-full bg-black/5 px-3 py-1 text-xs font-medium"
+                >
+                  Edit goal
+                </button>
+              )}
+              <div className="flex items-center gap-2">
+                {!isSet ? (
+                  <button
+                    type="button"
+                    aria-label="Decrease counter"
+                    onClick={() => {
+                      const parsed = Number(counterDraft);
+                      const safeValue = Number.isFinite(parsed) ? parsed : 0;
+                      setCounterDraft(String(safeValue - 1));
+                    }}
+                    className="rounded-full bg-white px-3 py-2 text-sm"
+                  >
+                    -
+                  </button>
+                ) : null}
+                <input
+                  aria-label={`${title} counter value`}
+                  value={counterDraft}
+                  onChange={(event) => setCounterDraft(event.target.value)}
+                  className="w-28 rounded-full border border-black/10 bg-white px-3 py-2 text-sm outline-none"
+                  inputMode="numeric"
+                  disabled={isSet}
+                />
+                {!isSet ? (
+                  <button
+                    type="button"
+                    aria-label="Increase counter"
+                    onClick={() => {
+                      const parsed = Number(counterDraft);
+                      const safeValue = Number.isFinite(parsed) ? parsed : 0;
+                      setCounterDraft(String(safeValue + 1));
+                    }}
+                    className="rounded-full bg-white px-3 py-2 text-sm"
+                  >
+                    +
+                  </button>
+                ) : null}
+                {isSet ? (
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      if (onClearEntry) {
+                        try {
+                          setError('');
+                          await onClearEntry(habitId);
+                        } catch (clearError) {
+                          const message = clearError instanceof Error ? clearError.message : 'Unable to clear right now. Please retry.';
+                          setError(message);
+                          return;
+                        }
+                      }
+
+                      setCompleted(false);
+                      setIsSet(false);
+                    }}
+                    className="rounded-full bg-white px-4 py-2 text-sm font-medium"
+                  >
+                    Unset
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      const parsed = Number(counterDraft);
+                      if (!Number.isInteger(parsed)) {
+                        setError('Counter value must be an integer.');
+                        return;
+                      }
+
+                      const saved = await saveValue(parsed);
+                      if (!saved) {
+                        return;
+                      }
+
+                      setCompleted(evaluateCounterCompletion(parsed));
+                      setIsSet(true);
+                    }}
+                    className="rounded-full bg-white px-4 py-2 text-sm font-medium"
+                  >
+                    Set
+                  </button>
+                )}
+              </div>
+            </div>
           )
         ) : null}
 

@@ -8,6 +8,7 @@ import { HabitRow } from '../../components/HabitRow';
 describe('HabitRow idempotent updates', () => {
   it('applies repeated counter updates and persists last value intent', async () => {
     const onSave = vi.fn().mockResolvedValue(undefined);
+    const onClearEntry = vi.fn().mockResolvedValue(undefined);
 
     renderWithProviders(
       <HabitRow
@@ -17,14 +18,23 @@ describe('HabitRow idempotent updates', () => {
         timeframe="daily"
         initialInteger={0}
         onSave={onSave}
+        onClearEntry={onClearEntry}
       />,
     );
 
-    await userEvent.click(screen.getByRole('button', { name: '+' }));
-    await userEvent.click(screen.getByRole('button', { name: '+' }));
+    await userEvent.clear(screen.getByLabelText('Counter Habit counter value'));
+    await userEvent.type(screen.getByLabelText('Counter Habit counter value'), '1');
+    await userEvent.click(screen.getByRole('button', { name: 'Set' }));
+
+    await userEvent.click(screen.getByRole('button', { name: 'Unset' }));
+
+    await userEvent.clear(screen.getByLabelText('Counter Habit counter value'));
+    await userEvent.type(screen.getByLabelText('Counter Habit counter value'), '2');
+    await userEvent.click(screen.getByRole('button', { name: 'Set' }));
 
     expect(onSave).toHaveBeenNthCalledWith(1, 'habit-counter', 1);
     expect(onSave).toHaveBeenNthCalledWith(2, 'habit-counter', 2);
-    expect(screen.getByText('2')).toBeInTheDocument();
+    expect(onClearEntry).toHaveBeenCalledWith('habit-counter');
+    expect(screen.getByDisplayValue('2')).toBeTruthy();
   });
 });

@@ -2,6 +2,7 @@ export type RoutineStatus = 'active' | 'paused';
 export type HabitTimeframe = 'daily' | 'weekly';
 export type HabitTrackingType = 'yesno' | 'counter' | 'measurement';
 export type HabitStatus = 'active' | 'archived' | 'deleted';
+export type CounterGoalOperator = 'gt' | 'lt' | 'eq';
 
 export interface RoutineRecord {
   id: string;
@@ -32,6 +33,8 @@ export interface HabitRecord {
   timeframe: HabitTimeframe;
   trackingType: HabitTrackingType;
   measurementUnit?: string;
+  counterGoalOperator?: CounterGoalOperator;
+  counterGoalValue?: number;
   status: HabitStatus;
   deletedAt?: string;
   createdAt: string;

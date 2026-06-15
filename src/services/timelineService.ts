@@ -18,6 +18,39 @@ export interface SelectedDateChecklistItem {
   fallbackApplied: boolean;
 }
 
+function isCounterConditionConfigured(habit: HabitRecord) {
+  return habit.trackingType === 'counter'
+    && typeof habit.counterGoalValue === 'number'
+    && Number.isInteger(habit.counterGoalValue)
+    && ['gt', 'lt', 'eq'].includes(habit.counterGoalOperator ?? '');
+}
+
+export function evaluateCounterCompletion(habit: HabitRecord, value?: number) {
+  if (!isCounterConditionConfigured(habit)) {
+    return false;
+  }
+
+  if (typeof value !== 'number') {
+    return false;
+  }
+
+  if (!Number.isInteger(value)) {
+    return false;
+  }
+
+  const goal = habit.counterGoalValue as number;
+
+  if (habit.counterGoalOperator === 'gt') {
+    return value > goal;
+  }
+
+  if (habit.counterGoalOperator === 'lt') {
+    return value < goal;
+  }
+
+  return value === goal;
+}
+
 function isCompletedEntry(entry: EntryRecord) {
   if (entry.valueType === 'boolean') {
     return entry.boolValue === true;
@@ -71,12 +104,25 @@ interface BuildTimelineInput {
 }
 
 export function buildDailyTimeline(input: BuildTimelineInput, existingTiles: TimelineTileSnapshot[] = [], today = new Date()) {
-  const dailyHabitIds = new Set(input.habits.filter((habit) => habit.timeframe === 'daily').map((habit) => habit.id));
+  const dailyHabits = input.habits.filter((habit) => habit.timeframe === 'daily');
+  const dailyHabitIds = new Set(dailyHabits.map((habit) => habit.id));
+  const habitsById = new Map(dailyHabits.map((habit) => [habit.id, habit]));
   const dayKeys = buildDailyWindow(today);
 
   const generated = dayKeys.map((periodKey) => {
     const completed = input.entries.some(
-      (entry) => dailyHabitIds.has(entry.habitId) && entry.periodKey === periodKey && isCompletedEntry(entry),
+      (entry) => {
+        if (!dailyHabitIds.has(entry.habitId) || entry.periodKey !== periodKey) {
+          return false;
+        }
+
+        const habit = habitsById.get(entry.habitId);
+        if (habit?.trackingType === 'counter') {
+          return evaluateCounterCompletion(habit, entry.intValue);
+        }
+
+        return isCompletedEntry(entry);
+      },
     );
 
     return {
@@ -90,12 +136,25 @@ export function buildDailyTimeline(input: BuildTimelineInput, existingTiles: Tim
 }
 
 export function buildWeeklyTimeline(input: BuildTimelineInput, existingTiles: TimelineTileSnapshot[] = [], today = new Date()) {
-  const weeklyHabitIds = new Set(input.habits.filter((habit) => habit.timeframe === 'weekly').map((habit) => habit.id));
+  const weeklyHabits = input.habits.filter((habit) => habit.timeframe === 'weekly');
+  const weeklyHabitIds = new Set(weeklyHabits.map((habit) => habit.id));
+  const habitsById = new Map(weeklyHabits.map((habit) => [habit.id, habit]));
   const weekKeys = buildVisibleWeekKeys(today);
 
   const generated = weekKeys.map((periodKey) => {
     const completed = input.entries.some(
-      (entry) => weeklyHabitIds.has(entry.habitId) && entry.periodKey === periodKey && isCompletedEntry(entry),
+      (entry) => {
+        if (!weeklyHabitIds.has(entry.habitId) || entry.periodKey !== periodKey) {
+          return false;
+        }
+
+        const habit = habitsById.get(entry.habitId);
+        if (habit?.trackingType === 'counter') {
+          return evaluateCounterCompletion(habit, entry.intValue);
+        }
+
+        return isCompletedEntry(entry);
+      },
     );
 
     return {
@@ -141,10 +200,14 @@ export function buildSelectedDateChecklistItems(
       } satisfies SelectedDateChecklistItem;
     }
 
+    const completed = habit.trackingType === 'counter'
+      ? evaluateCounterCompletion(habit, entry.intValue)
+      : isCompletedEntry(entry);
+
     return {
       habit,
       entry,
-      completed: isCompletedEntry(entry),
+      completed,
       numericValue: entry.intValue,
       textValue: entry.textValue,
       fallbackApplied: false,

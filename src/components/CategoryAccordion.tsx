@@ -1,10 +1,12 @@
 import { type ReactNode, useState } from 'react';
-import type { HabitTimeframe, HabitTrackingType } from '../db/schema';
+import type { CounterGoalOperator, HabitTimeframe, HabitTrackingType } from '../db/schema';
 
 interface NewHabitInput {
   title: string;
   timeframe: HabitTimeframe;
   trackingType: HabitTrackingType;
+  counterGoalOperator?: CounterGoalOperator;
+  counterGoalValue?: number;
 }
 
 interface CategoryAccordionProps {
@@ -34,6 +36,9 @@ export function CategoryAccordion({
   const [newHabitTitle, setNewHabitTitle] = useState('');
   const [newHabitTimeframe, setNewHabitTimeframe] = useState<HabitTimeframe>('daily');
   const [newHabitTrackingType, setNewHabitTrackingType] = useState<HabitTrackingType>('yesno');
+  const [newCounterGoalOperator, setNewCounterGoalOperator] = useState<CounterGoalOperator>('gt');
+  const [newCounterGoalValue, setNewCounterGoalValue] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   async function saveCategoryTitle() {
     const trimmed = nextTitle.trim();
@@ -53,15 +58,36 @@ export function CategoryAccordion({
     const trimmed = newHabitTitle.trim();
     if (!trimmed || !onCreateHabit) return;
 
+    if (newHabitTrackingType === 'counter') {
+      if (!newCounterGoalValue.trim()) {
+        setErrorMessage('Counter habits require a goal value.');
+        return;
+      }
+
+      const parsedGoal = Number(newCounterGoalValue);
+      if (!Number.isInteger(parsedGoal)) {
+        setErrorMessage('Counter goal must be an integer.');
+        return;
+      }
+    }
+
+    setErrorMessage('');
+
+    const counterGoalValue = newHabitTrackingType === 'counter' ? Number(newCounterGoalValue) : undefined;
+
     await onCreateHabit(categoryId, {
       title: trimmed,
       timeframe: newHabitTimeframe,
       trackingType: newHabitTrackingType,
+      counterGoalOperator: newHabitTrackingType === 'counter' ? newCounterGoalOperator : undefined,
+      counterGoalValue,
     });
 
     setNewHabitTitle('');
     setNewHabitTimeframe('daily');
     setNewHabitTrackingType('yesno');
+    setNewCounterGoalOperator('gt');
+    setNewCounterGoalValue('');
     setIsCreatingHabit(false);
   }
 
@@ -159,6 +185,28 @@ export function CategoryAccordion({
                   <option value="measurement">Measurement</option>
                 </select>
               </div>
+              {newHabitTrackingType === 'counter' ? (
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                  <select
+                    aria-label="Counter goal operator"
+                    value={newCounterGoalOperator}
+                    onChange={(event) => setNewCounterGoalOperator(event.target.value as CounterGoalOperator)}
+                    className="rounded-full border border-black/10 bg-white px-3 py-2 text-sm"
+                  >
+                    <option value="gt">Greater than</option>
+                    <option value="lt">Less than</option>
+                    <option value="eq">Equal to</option>
+                  </select>
+                  <input
+                    aria-label="Counter goal value"
+                    value={newCounterGoalValue}
+                    onChange={(event) => setNewCounterGoalValue(event.target.value)}
+                    className="rounded-full border border-black/10 bg-white px-3 py-2 text-sm outline-none"
+                    placeholder="Goal integer"
+                    inputMode="numeric"
+                  />
+                </div>
+              ) : null}
               <div className="flex gap-2">
                 <button type="button" onClick={createNewHabit} className="rounded-full bg-ink px-3 py-2 text-xs font-medium text-paper">
                   Add habit
@@ -167,6 +215,7 @@ export function CategoryAccordion({
                   Cancel
                 </button>
               </div>
+              {errorMessage ? <p className="text-xs text-red-600">{errorMessage}</p> : null}
             </div>
           ) : (
             <button type="button" onClick={() => setIsCreatingHabit(true)} className="rounded-full bg-black/5 px-3 py-2 text-xs font-medium">
