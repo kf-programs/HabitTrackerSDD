@@ -76,6 +76,22 @@ describe('AllRoutinesView', () => {
     expect(updateRoutineMock).toHaveBeenCalledWith('p-1', { status: 'active' });
   });
 
+  it('navigates when clicking a routine row', () => {
+    renderWithProviders(
+      <MemoryRouter>
+        <AllRoutinesView
+          routines={[
+            makeRoutine({ id: 'a-1', title: 'Morning', status: 'active' }),
+          ]}
+        />
+      </MemoryRouter>,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Open Morning' }));
+
+    expect(navigateMock).toHaveBeenCalledWith('/routines/a-1');
+  });
+
   it('offers a create routine action', async () => {
     renderWithProviders(
       <MemoryRouter>

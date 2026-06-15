@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { updateRoutine } from '../repositories/routinesRepository';
 import type { RoutineRecord } from '../db/schema';
 
@@ -42,13 +42,25 @@ export function AllRoutinesView({ routines }: AllRoutinesViewProps) {
           </div>
           <div className="mt-4 space-y-2">
             {activeRoutines.map((routine) => (
-              <div key={routine.id} className="flex items-center justify-between gap-2 rounded-2xl bg-paper px-4 py-3">
-                <Link to={`/routines/${routine.id}`} className="text-sm font-medium text-ink/80 underline-offset-4 hover:underline">
-                  {routine.title}
-                </Link>
+              <div
+                key={routine.id}
+                className="flex items-center justify-between gap-2 rounded-2xl bg-paper px-4 py-3 hover:bg-white"
+                role="button"
+                tabIndex={0}
+                onClick={() => navigate(`/routines/${routine.id}`)}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    navigate(`/routines/${routine.id}`);
+                  }
+                }}
+                aria-label={`Open ${routine.title}`}
+              >
+                <p className="text-sm font-medium text-ink/80">{routine.title}</p>
                 <button
                   type="button"
-                  onClick={async () => {
+                  onClick={async (event) => {
+                    event.stopPropagation();
                     await updateRoutine(routine.id, { status: 'paused' });
                   }}
                   className="rounded-full bg-black/5 px-3 py-1 text-xs font-medium"
@@ -71,13 +83,25 @@ export function AllRoutinesView({ routines }: AllRoutinesViewProps) {
           </div>
           <div className="mt-4 space-y-2">
             {pausedRoutines.map((routine) => (
-              <div key={routine.id} className="flex items-center justify-between gap-2 rounded-2xl bg-paper px-4 py-3">
-                <Link to={`/routines/${routine.id}`} className="text-sm font-medium text-ink/80 underline-offset-4 hover:underline">
-                  {routine.title}
-                </Link>
+              <div
+                key={routine.id}
+                className="flex items-center justify-between gap-2 rounded-2xl bg-paper px-4 py-3 hover:bg-white"
+                role="button"
+                tabIndex={0}
+                onClick={() => navigate(`/routines/${routine.id}`)}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    navigate(`/routines/${routine.id}`);
+                  }
+                }}
+                aria-label={`Open ${routine.title}`}
+              >
+                <p className="text-sm font-medium text-ink/80">{routine.title}</p>
                 <button
                   type="button"
-                  onClick={async () => {
+                  onClick={async (event) => {
+                    event.stopPropagation();
                     await updateRoutine(routine.id, { status: 'active' });
                   }}
                   className="rounded-full bg-black/5 px-3 py-1 text-xs font-medium"
