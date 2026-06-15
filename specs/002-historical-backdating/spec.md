@@ -95,7 +95,7 @@ Users see a consistent checklist presentation on any selected date, with clear c
 
 - **FR-001**: System MUST allow users to change the active calendar date view to supported past dates and return to the current day.
 - **FR-002**: System MUST load and display the set of habits that were active on the selected date, not only the currently active habit set.
-- **FR-003**: System MUST enforce a single daily state per habit per calendar day.
+- **FR-003**: System MUST expose exactly one authoritative daily state for each habit per calendar day in reads and writes.
 - **FR-004**: System MUST update the existing daily state when users make repeated interactions on the same habit and day.
 - **FR-005**: System MUST persist completion, counter, and measurement updates to the selected date context only.
 - **FR-006**: System MUST preserve historical records when habit metadata (for example, name or tracking criteria) is modified.
@@ -104,11 +104,11 @@ Users see a consistent checklist presentation on any selected date, with clear c
 - **FR-009**: System MUST retain and render historical records for deleted habits on dates where they were active.
 - **FR-010**: System MUST render a unified checklist format for all selected dates with clear completion-state visual feedback on each item.
 - **FR-011**: System MUST ensure historical date rendering includes both habit presence and logged values as they existed for that date.
-- **FR-012**: System MUST prevent duplicate historical lines for the same habit/day even under repeated or rapid user updates.
+- **FR-012**: System MUST prevent duplicate user-visible or persisted outcomes for the same habit/day even under repeated or rapid updates.
 - **FR-013**: System MUST degrade gracefully when historical record values are incompatible with the current habit tracking type by rendering affected records as completed checkbox state and hiding counter values for those records.
-- **FR-014**: System MUST model daily logging with a unique habit/date identity so each habit has at most one mutable state per calendar day.
-- **FR-015**: System MUST include habit deletion lifecycle tracking in habit definitions (for example, deleted timestamp or equivalent deletion flag) and MUST use soft deletion for habit removal.
-- **FR-016**: System MUST enforce a composite uniqueness constraint on habit identifier plus normalized log date for daily records.
+- **FR-014**: System MUST implement daily logging as a state-based model (not append-only event rows) keyed by habit identifier and normalized log date.
+- **FR-015**: System MUST store habit deletion lifecycle using a nullable `deletedAt` timestamp and MUST use soft deletion for habit removal.
+- **FR-016**: System MUST enforce a composite uniqueness constraint in persistence on habit identifier plus normalized log date for daily records.
 - **FR-017**: System MUST implement save/log interactions as idempotent upsert operations keyed by habit identifier and log date.
 - **FR-018**: System MUST build checklist views for a selected date by merging date-valid habit definitions with records for that same date using habit identifier matching.
 
@@ -132,7 +132,7 @@ Users see a consistent checklist presentation on any selected date, with clear c
 
 ### Entity Structural Requirements
 
-- Habit definition data MUST include a deletion tracking property so active list membership can change without removing historical continuity.
+- Habit definition data MUST include nullable `deletedAt` timestamp tracking so active list membership can change without removing historical continuity.
 - Habit daily records MUST include a parent habit identifier and normalized day value.
 - Habit daily records MUST support both completion state and numeric state fields for tracking modes.
 - Daily record storage MUST enforce composite uniqueness on (habit identifier, log date).
@@ -140,7 +140,7 @@ Users see a consistent checklist presentation on any selected date, with clear c
 ### Core Logical Operations
 
 1. Idempotent Save/Log Upsert: Find the daily record by unique habit/date key; update it when found, create it when absent.
-2. Habit Soft Delete: Mark habit definition deletion lifecycle state and remove from current/future active lists without physically deleting historical records.
+2. Habit Soft Delete: Set habit definition `deletedAt` and remove from current/future active lists without physically deleting historical records.
 3. Date-Scoped Read/Merge: For a selected date, retrieve habits valid for that date (active or deleted after the selected day), retrieve records for that date, and merge by habit identifier to render filled vs empty checklist state.
 
 ## Success Criteria *(mandatory)*

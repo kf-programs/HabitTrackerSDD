@@ -92,6 +92,7 @@
 
 - [ ] T025 [P] [US3] Add soft-delete lifecycle repository test for historical retention in src/test/repositories/habitsRepository.soft-delete.test.ts
 - [ ] T026 [P] [US3] Add date-window visibility component test for deleted habits in src/test/components/DailyGrid.deletion-window.test.tsx
+- [ ] T040 [P] [US3] Add rename-and-criteria-update linkage test to verify historical records remain bound to the same habit identity in src/test/repositories/habitsRepository.rename-history-linkage.test.ts
 
 ### Implementation for User Story 3
 
@@ -133,6 +134,7 @@
 - [ ] T037 [P] Add service-level merge/fallback regression test in src/test/services/timelineService.historical-read.test.ts
 - [ ] T038 Update manual validation checklist with final verification outcomes in specs/002-historical-backdating/quickstart.md
 - [ ] T039 Add concise non-obvious logic comments for fallback merge behavior in src/services/timelineService.ts
+- [ ] T041 Add selected-date navigation/render performance validation for <=1s p95 target in src/test/components/RoutineWorkspace.performance.test.tsx
 
 ---
 
