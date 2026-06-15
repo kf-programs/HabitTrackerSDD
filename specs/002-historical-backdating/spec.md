@@ -8,6 +8,12 @@
 
 **Input**: User description: "New feature request to support historical navigation and backdating with idempotent daily updates, lifecycle-safe habit history, and unified visual checklist continuity across dates."
 
+## Clarifications
+
+### Session 2026-06-15
+
+- Q: What is the canonical fallback policy for historical type-mismatched numeric records? -> A: Render as completed checkbox for that historical day and do not show a counter value for that record.
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Navigate and Log Past Days (Priority: P1)
@@ -69,7 +75,7 @@ Users see a consistent checklist presentation on any selected date, with clear c
 
 1. **Given** any date with completed and incomplete habits, **When** the checklist is rendered, **Then** each completed item uses the same completion feedback style used on the current day.
 2. **Given** the user navigates across dates, **When** each day view loads, **Then** checklist structure remains unified and only state values differ by date.
-3. **Given** a historical record value does not match the habit's current tracking type, **When** that day is rendered, **Then** the app shows a safe fallback state (for example, checkbox-complete or counter default) instead of failing the view.
+3. **Given** a historical record value does not match the habit's current tracking type, **When** that day is rendered, **Then** the app renders the record as a completed checkbox state and does not show a counter value, instead of failing the view.
 
 ### Edge Cases
 
@@ -77,7 +83,7 @@ Users see a consistent checklist presentation on any selected date, with clear c
 - A habit is deleted and then the user navigates to a date after deletion but before current day; deleted habit must remain hidden for those post-deletion dates.
 - A user rapidly toggles a habit multiple times on one day; final visible state and stored state must match with no duplicate day records.
 - A user changes date while an edit is in progress; changes must apply to the originally active date or be safely canceled to avoid cross-date corruption.
-- A historical record has a legacy or null value that conflicts with the habit's current tracking mode; the app must render a meaningful fallback state and keep the day usable.
+- A historical record has a legacy or null value that conflicts with the habit's current tracking mode; the app must render that record as completed checkbox state (no counter value) and keep the day usable.
 
 ## Requirements *(mandatory)*
 
@@ -95,7 +101,7 @@ Users see a consistent checklist presentation on any selected date, with clear c
 - **FR-010**: System MUST render a unified checklist format for all selected dates with clear completion-state visual feedback on each item.
 - **FR-011**: System MUST ensure historical date rendering includes both habit presence and logged values as they existed for that date.
 - **FR-012**: System MUST prevent duplicate historical lines for the same habit/day even under repeated or rapid user updates.
-- **FR-013**: System MUST degrade gracefully when historical record values are incompatible with the current habit tracking type, including safe defaults that preserve usability for that day.
+- **FR-013**: System MUST degrade gracefully when historical record values are incompatible with the current habit tracking type by rendering affected records as completed checkbox state and hiding counter values for those records.
 
 ### Engineering Constraints *(mandatory)*
 
@@ -124,7 +130,7 @@ Users see a consistent checklist presentation on any selected date, with clear c
 - **SC-003**: In validation tests, 100% of deleted habits remain visible on eligible historical dates and 100% are absent from current/future active lists.
 - **SC-004**: In usability checks, at least 90% of participants correctly identify completed vs incomplete items on historical dates without additional guidance.
 - **SC-005**: After rename or criteria updates, 100% of historical logs remain associated with the same habit identity in progression views.
-- **SC-006**: In compatibility tests with legacy or mismatched historical values, 100% of affected days render without crashes and display a deterministic fallback state.
+- **SC-006**: In compatibility tests with legacy or mismatched historical values, 100% of affected days render without crashes and display the defined checkbox-complete fallback (without counter value display).
 
 ## Assumptions
 
@@ -132,4 +138,4 @@ Users see a consistent checklist presentation on any selected date, with clear c
 - Calendar-day semantics follow the user's local date boundary behavior already used in the app.
 - No cross-user collaboration is in scope; all history and edits remain single-user local data.
 - Existing analytics and summaries continue to consume historical records from the same canonical habit identity.
-- For incompatible historical values, fallback display behavior uses deterministic defaults (such as treating null numeric values as completed checkbox state or a default counter value of 1).
+- For incompatible historical values, fallback display behavior is deterministic: treat the record as completed checkbox state and do not display a counter value for that record.
