@@ -63,6 +63,7 @@ export function DailyGrid({ dailyTiles, weeklyTiles, startLabel, endLabel, selec
   const weekColumns = getWeekColumns(dailyTiles, weeklyTiles);
   const tilesByDay = new Map(dailyTiles.map((tile) => [tile.periodKey, tile]));
   const weeklyByKey = new Map(weeklyTiles.map((tile) => [tile.periodKey, tile]));
+  const selectedWeekKey = `${formatDayKey(getWeekStart(selectedDayKey))}-SUN`;
 
   return (
     <section className="space-y-2">
@@ -116,7 +117,7 @@ export function DailyGrid({ dailyTiles, weeklyTiles, startLabel, endLabel, selec
                       return <div key={`weekly-${weeklyKey}`} aria-hidden="true" className="h-full w-full rounded-full bg-transparent" />;
                     }
 
-                    const isSelectedWeek = weeklyKey.startsWith(selectedDayKey.slice(0, 8));
+                    const isSelectedWeek = weeklyKey === selectedWeekKey;
 
                     return (
                       <div
