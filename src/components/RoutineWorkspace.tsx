@@ -627,18 +627,6 @@ export function RoutineWorkspace() {
           onSelectedDayKeyChange={handleSelectedDayKeyChange}
         />
       ) : null}
-      {!isCreatingNew && activeRoutineId ? (
-        <RoutineJournalEditor
-          value={journalDraft}
-          maxLength={JOURNAL_MAX_LENGTH}
-          isSaving={isJournalSaving}
-          errorMessage={journalError}
-          onChange={setJournalDraft}
-          onBlur={() => {
-            void saveJournalDraft();
-          }}
-        />
-      ) : null}
       {categories.map((category, index) => (
         <CategoryAccordion
           key={category.id}
@@ -712,6 +700,18 @@ export function RoutineWorkspace() {
           </>
         ) : null}
       </div>
+      {!isCreatingNew && activeRoutineId ? (
+        <RoutineJournalEditor
+          value={journalDraft}
+          maxLength={JOURNAL_MAX_LENGTH}
+          isSaving={isJournalSaving}
+          errorMessage={journalError}
+          onChange={setJournalDraft}
+          onBlur={() => {
+            void saveJournalDraft();
+          }}
+        />
+      ) : null}
       <ConfirmationDialog
         isOpen={isConfirmDeleteDialogOpen}
         title="Delete Routine"

@@ -67,6 +67,9 @@ export function DashboardView({ routines }: DashboardViewProps) {
           {recentRoutines.length === 0 ? 'Create your first routine' : 'Create routine'}
         </button>
       </div>
+      <p className="mt-8 text-right text-sm text-ink/70">
+          v.0.2.0 
+      </p>
     </section>
   );
 }
