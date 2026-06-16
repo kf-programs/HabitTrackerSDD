@@ -100,7 +100,7 @@ export function DailyGrid({ dailyTiles, weeklyTiles, startLabel, endLabel, selec
             <div
               role="list"
               aria-label="Timeline"
-              className="grid grid-flow-col gap-y-0.5 gap-x-0.5"
+              className="grid grid-flow-col gap-y-0.5 gap-x-0.5 pr-1"
               style={{
                 // 2. The single constant now configures both rows and columns
                 gridTemplateColumns: `repeat(${weekColumns.length}, minmax(0, ${TILE_SIZE}))`,
