@@ -1,4 +1,5 @@
 import { type ReactNode, useState } from 'react';
+import { Trash2 } from 'lucide-react';
 import type { CounterGoalOperator, HabitTimeframe, HabitTrackingType } from '../db/schema';
 
 interface NewHabitInput {
@@ -17,6 +18,7 @@ interface CategoryAccordionProps {
   children: ReactNode;
   onRenameCategory?: (categoryId: string, input: { name: string; description?: string }) => Promise<void>;
   onCreateHabit?: (categoryId: string, input: NewHabitInput) => Promise<void>;
+  onDeleteCategory?: (categoryId: string) => Promise<void>;
 }
 
 export function CategoryAccordion({
@@ -27,6 +29,7 @@ export function CategoryAccordion({
   children,
   onRenameCategory,
   onCreateHabit,
+  onDeleteCategory,
 }: CategoryAccordionProps) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
@@ -136,19 +139,31 @@ export function CategoryAccordion({
               </span>
               <span className="text-lg text-ink/45">{isOpen ? '−' : '+'}</span>
             </button>
-            {onRenameCategory ? (
-              <button
-                type="button"
-                onClick={() => {
-                  setNextTitle(title);
-                  setNextDescription(description ?? '');
-                  setIsEditingTitle(true);
-                }}
-                className="ml-3 rounded-full bg-black/5 px-3 py-1 text-xs font-medium"
-              >
-                Edit
-              </button>
-            ) : null}
+            <div className="ml-3 flex items-center gap-2">
+              {onRenameCategory ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setNextTitle(title);
+                    setNextDescription(description ?? '');
+                    setIsEditingTitle(true);
+                  }}
+                  className="rounded-full bg-black/5 px-3 py-1 text-xs font-medium"
+                >
+                  Edit
+                </button>
+              ) : null}
+              {onDeleteCategory ? (
+                <button
+                  type="button"
+                  onClick={() => void onDeleteCategory(categoryId)}
+                  className="rounded-full bg-red-100 px-2 py-1 text-xs font-medium text-red-700"
+                  aria-label={`Delete category ${title}`}
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </button>
+              ) : null}
+            </div>
           </>
         )}
       </div>

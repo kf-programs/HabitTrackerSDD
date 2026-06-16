@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react';
 import type { ReactElement } from 'react';
-import type { HabitRecord } from '../db/schema';
+import type { CategoryRecord, HabitRecord, RoutineRecord } from '../db/schema';
 import { getDayKey, shiftDayKey } from '../utils/dateBoundaries';
 
 export function renderWithProviders(ui: ReactElement) {
@@ -23,6 +23,35 @@ export function buildHabitLifecycleFixture(overrides: Partial<HabitRecord> = {})
     trackingType: 'yesno',
     status: 'active',
     deletedAt: undefined,
+    createdAt: now,
+    updatedAt: now,
+    ...overrides,
+  };
+}
+
+export function buildRoutineFixture(overrides: Partial<RoutineRecord> = {}): RoutineRecord {
+  const now = new Date().toISOString();
+  return {
+    id: 'routine-1',
+    title: 'Fixture Routine',
+    description: 'Fixture description',
+    status: 'active',
+    createdAt: now,
+    updatedAt: now,
+    lastAccessedAt: now,
+    ...overrides,
+  };
+}
+
+export function buildCategoryFixture(overrides: Partial<CategoryRecord> = {}): CategoryRecord {
+  const now = new Date().toISOString();
+  return {
+    id: 'category-1',
+    routineId: 'routine-1',
+    name: 'Fixture Category',
+    description: 'Fixture category description',
+    orderIndex: 0,
+    isExpandedDefault: true,
     createdAt: now,
     updatedAt: now,
     ...overrides,

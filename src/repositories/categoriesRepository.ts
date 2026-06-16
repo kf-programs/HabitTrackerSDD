@@ -43,3 +43,30 @@ export async function updateCategory(
 export async function listCategories() {
   return db.categories.toArray();
 }
+
+export async function deleteCategoryForRoutine(categoryId: string, routineId: string) {
+  const now = getNow();
+
+  await db.transaction('rw', db.categories, db.habits, async () => {
+    const category = await db.categories.get(categoryId);
+
+    if (!category || category.routineId !== routineId) {
+      throw new Error('Category not found for this routine.');
+    }
+
+    const habits = await db.habits.where('categoryId').equals(categoryId).toArray();
+    const habitsInRoutine = habits.filter((habit) => habit.routineId === routineId);
+
+    await Promise.all(
+      habitsInRoutine.map((habit) =>
+        db.habits.update(habit.id, {
+          status: 'deleted',
+          deletedAt: habit.deletedAt ?? now,
+          updatedAt: now,
+        }),
+      ),
+    );
+
+    await db.categories.delete(categoryId);
+  });
+}

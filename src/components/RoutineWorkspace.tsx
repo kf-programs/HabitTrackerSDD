@@ -12,8 +12,9 @@ import {
   listCategoriesForRoutine,
   updateCategory,
   createCategory,
+  deleteCategoryForRoutine,
 } from '../repositories/categoriesRepository';
-import { listHabitsForRoutineOnDate, createHabit, updateHabit } from '../repositories/habitsRepository';
+import { listHabitsForRoutineOnDate, createHabit, updateHabit, deleteHabit } from '../repositories/habitsRepository';
 import { db } from '../db/client';
 import { buildSelectedDateChecklistItems, getPeriodKeyForHabit } from '../services/timelineService';
 import { deleteEntryForHabitPeriod, upsertEntry } from '../repositories/entriesRepository';
@@ -24,6 +25,10 @@ import { getDayKey } from '../utils/dateBoundaries';
 
 const JOURNAL_MAX_LENGTH = 2000;
 export const JOURNAL_AUTOSAVE_DEBOUNCE_MS = 600;
+
+type DeleteTarget =
+  | { type: 'habit'; id: string; title: string }
+  | { type: 'category'; id: string; title: string };
 
 export function RoutineWorkspace() {
   const { routineId, selectedDayKey: selectedDayKeyParam } = useParams();
@@ -37,6 +42,10 @@ export function RoutineWorkspace() {
   const [isConfirmDeleteDialogOpen, setIsConfirmDeleteDialogOpen] = useState(false);
   const [isLeaveDialogOpen, setIsLeaveDialogOpen] = useState(false);
   const [pendingPath, setPendingPath] = useState<string | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<DeleteTarget | null>(null);
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+  const [isDeleteInFlight, setIsDeleteInFlight] = useState(false);
+  const [deleteErrorMessage, setDeleteErrorMessage] = useState('');
   const [selectedDayKey, setSelectedDayKey] = useState(selectedDayKeyParam ?? getDayKey());
   const [journalDraft, setJournalDraft] = useState('');
   const [persistedJournalText, setPersistedJournalText] = useState('');
@@ -353,6 +362,56 @@ export function RoutineWorkspace() {
     setIsConfirmDeleteDialogOpen(true);
   }
 
+  function openHabitDeleteDialog(habit: HabitRecord) {
+    setDeleteErrorMessage('');
+    setDeleteTarget({ type: 'habit', id: habit.id, title: habit.title });
+    setIsDeleteConfirmOpen(true);
+  }
+
+  function openCategoryDeleteDialog(category: { id: string; name: string }) {
+    setDeleteErrorMessage('');
+    setDeleteTarget({ type: 'category', id: category.id, title: category.name });
+    setIsDeleteConfirmOpen(true);
+  }
+
+  function cancelDeleteTarget() {
+    if (isDeleteInFlight) {
+      return;
+    }
+
+    setIsDeleteConfirmOpen(false);
+    setDeleteTarget(null);
+    setDeleteErrorMessage('');
+  }
+
+  async function confirmDeleteTarget() {
+    if (!deleteTarget || isDeleteInFlight) {
+      return;
+    }
+
+    setIsDeleteInFlight(true);
+    try {
+      if (deleteTarget.type === 'habit') {
+        await deleteHabit(deleteTarget.id);
+      } else {
+        if (!routineId || isCreatingNew) {
+          return;
+        }
+        // Category delete is routine-scoped and relies on repository transaction semantics.
+        await deleteCategoryForRoutine(deleteTarget.id, routineId);
+      }
+
+      setIsDeleteConfirmOpen(false);
+      setDeleteTarget(null);
+      setDeleteErrorMessage('');
+    } catch (error) {
+      // Keep target visible when persistence fails so UI remains consistent with stored data.
+      setDeleteErrorMessage(error instanceof Error ? error.message : 'Unable to delete right now. Please retry.');
+    } finally {
+      setIsDeleteInFlight(false);
+    }
+  }
+
   async function confirmDeleteRoutine() {
     if (!routineId || isCreatingNew) return;
     await deleteRoutine(routineId);
@@ -589,6 +648,9 @@ export function RoutineWorkspace() {
           defaultOpen={index === 0}
           onRenameCategory={handleRenameCategory}
           onCreateHabit={handleCreateHabit}
+          onDeleteCategory={async () => {
+            openCategoryDeleteDialog(category);
+          }}
         >
           {(habitsByCategory[category.id] ?? []).map((habit) => {
             const item = checklistByHabitId.get(habit.id);
@@ -612,11 +674,15 @@ export function RoutineWorkspace() {
                 onRenameHabit={handleRenameHabit}
                 onUpdateCounterGoal={handleUpdateCounterGoal}
                 onClearEntry={() => handleClearHabitEntry(habit)}
+                onDeleteHabit={async () => {
+                  openHabitDeleteDialog(habit);
+                }}
               />
             );
           })}
         </CategoryAccordion>
       ))}
+      {deleteErrorMessage ? <p className="text-sm font-medium text-red-700">{deleteErrorMessage}</p> : null}
       <div className="mt-6 flex items-center gap-2">
         {!isCreatingNew ? (
           <button
@@ -661,6 +727,15 @@ export function RoutineWorkspace() {
         onCancel={handleLeaveWithoutSaving}
         confirmLabel="Save"
         cancelLabel="Leave without saving"
+      />
+      <ConfirmationDialog
+        isOpen={isDeleteConfirmOpen}
+        title={deleteTarget?.type === 'habit' ? 'Delete Habit' : 'Delete Category'}
+        message={`Are you sure you want to delete ${deleteTarget?.type === 'habit' ? 'habit' : 'category'} "${deleteTarget?.title ?? ''}"? This action cannot be undone.`}
+        onConfirm={() => void confirmDeleteTarget()}
+        onCancel={cancelDeleteTarget}
+        confirmLabel={isDeleteInFlight ? 'Deleting...' : 'Confirm'}
+        cancelLabel="Cancel"
       />
     </section>
   );

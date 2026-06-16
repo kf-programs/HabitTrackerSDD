@@ -101,4 +101,19 @@ describe('ConfirmationDialog', () => {
     expect(screen.getByRole('button', { name: 'Save' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Leave' })).toBeInTheDocument();
   });
+
+  it('keeps default action labels accessible as Confirm and Cancel', () => {
+    render(
+      <ConfirmationDialog
+        isOpen={true}
+        title="Delete Habit"
+        message="Are you sure you want to delete this habit?"
+        onConfirm={onConfirm}
+        onCancel={onCancel}
+      />,
+    );
+
+    expect(screen.getByRole('button', { name: 'Confirm' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Cancel' })).toBeInTheDocument();
+  });
 });

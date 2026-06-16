@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Trash2 } from 'lucide-react';
 import type { CounterGoalOperator, HabitTimeframe, HabitTrackingType } from '../db/schema';
 
 interface HabitRowProps {
@@ -15,6 +16,7 @@ interface HabitRowProps {
   onSave: (habitId: string, value: boolean | number | string) => Promise<void>;
   onRenameHabit?: (habitId: string, title: string) => Promise<void>;
   onUpdateCounterGoal?: (habitId: string, operator: CounterGoalOperator, goalValue: number) => Promise<void>;
+  onDeleteHabit?: (habitId: string) => Promise<void>;
   // True when a persisted entry already exists for this habit/period.
   hasEntry?: boolean;
   onClearEntry?: (habitId: string) => Promise<void>;
@@ -35,6 +37,7 @@ export function HabitRow({
   onSave,
   onRenameHabit,
   onUpdateCounterGoal,
+  onDeleteHabit,
   onClearEntry,
 }: HabitRowProps) {
   const [habitTitle, setHabitTitle] = useState(title);
@@ -185,6 +188,16 @@ export function HabitRow({
               {onRenameHabit ? (
                 <button type="button" onClick={() => setIsEditingTitle(true)} className="rounded-full bg-black/5 px-2 py-1 text-xs font-medium">
                   Edit
+                </button>
+              ) : null}
+              {onDeleteHabit ? (
+                <button
+                  type="button"
+                  onClick={() => void onDeleteHabit(habitId)}
+                  className="rounded-full bg-red-100 px-2 py-1 text-xs font-medium text-red-700"
+                  aria-label={`Delete habit ${habitTitle}`}
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
                 </button>
               ) : null}
             </div>
