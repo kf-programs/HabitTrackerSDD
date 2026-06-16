@@ -7,6 +7,7 @@ import { renderWithProviders } from '../utils';
 import { RoutineWorkspace } from '../../components/RoutineWorkspace';
 import { seedDatabase } from '../../db/seed';
 import { db } from '../../db/client';
+import { getDayKey } from '../../utils/dateBoundaries';
 
 async function addCounterHabit(goalOperator: 'gt' | 'lt' | 'eq', goalValue: number) {
   const now = new Date().toISOString();
@@ -109,15 +110,16 @@ describe('RoutineWorkspace counter goal behavior', () => {
   it('recomputes completion immediately when an existing counter goal changes', async () => {
     await seedDatabase();
     await addCounterHabit('gt', 10);
+    const selectedDayKey = getDayKey();
 
     await db.entries.add({
       id: 'entry-counter-existing',
       habitId: 'habit-steps',
       timeframe: 'daily',
-      periodKey: '2026-06-15',
+      periodKey: selectedDayKey,
       valueType: 'integer',
       intValue: 9,
-      recordedAt: new Date('2026-06-15T10:00:00.000Z').toISOString(),
+      recordedAt: new Date().toISOString(),
       source: 'user',
     });
 
