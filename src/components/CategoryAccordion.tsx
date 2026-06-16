@@ -96,7 +96,7 @@ export function CategoryAccordion({
 
   return (
     <article className="overflow-hidden rounded-3xl bg-white/80 shadow-soft">
-      <div className="flex w-full items-center justify-between px-5 py-4 text-left">
+      <div className="flex w-full flex-wrap items-center justify-between gap-3 px-5 py-4 text-left">
         {isEditingTitle ? (
           <div className="w-full space-y-2">
             <input
@@ -132,14 +132,18 @@ export function CategoryAccordion({
           </div>
         ) : (
           <>
-            <button type="button" className="flex flex-1 items-center justify-between" onClick={() => setIsOpen((value) => !value)}>
-              <span>
+            <button
+              type="button"
+              className="flex min-w-0 flex-1 items-center justify-between gap-2"
+              onClick={() => setIsOpen((value) => !value)}
+            >
+              <span className="min-w-0">
                 <span className="block text-base font-semibold">{title}</span>
                 {description ? <span className="mt-1 block text-xs text-ink/60">{description}</span> : null}
               </span>
               <span className="text-lg text-ink/45">{isOpen ? '−' : '+'}</span>
             </button>
-            <div className="ml-3 flex items-center gap-2">
+            <div className="ml-auto flex w-full justify-end gap-2 sm:w-auto">
               {onRenameCategory ? (
                 <button
                   type="button"

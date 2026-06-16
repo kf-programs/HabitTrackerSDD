@@ -30,4 +30,25 @@ describe('HabitRow deletion controls', () => {
 
     expect(onDeleteHabit).toHaveBeenCalledWith('habit-1');
   });
+
+  it('uses a wrapping title/action row so controls can move below long titles on mobile', () => {
+    renderWithProviders(
+      <HabitRow
+        habitId="habit-1"
+        title="A very long habit title that should not push controls off-screen on mobile"
+        trackingType="yesno"
+        timeframe="daily"
+        initialBoolean={false}
+        onSave={vi.fn().mockResolvedValue(undefined)}
+        onRenameHabit={vi.fn().mockResolvedValue(undefined)}
+        onDeleteHabit={vi.fn().mockResolvedValue(undefined)}
+      />,
+    );
+
+    const editButton = screen.getByRole('button', { name: 'Edit' });
+    const titleActionRow = editButton.parentElement;
+
+    expect(titleActionRow).not.toBeNull();
+    expect(titleActionRow?.className).toContain('flex-wrap');
+  });
 });

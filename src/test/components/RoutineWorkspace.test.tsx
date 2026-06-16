@@ -253,4 +253,23 @@ describe('RoutineWorkspace interactions', () => {
     expect(screen.getByText('Gentle start to the day')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /edit routine details/i })).toBeInTheDocument();
   });
+
+  it('uses a wrapping action row so routine controls can move below long titles on mobile', async () => {
+    await seedDatabase();
+
+    renderWithProviders(
+      <MemoryRouter initialEntries={['/routines/routine-morning']}>
+        <Routes>
+          <Route path="/routines/:routineId" element={<RoutineWorkspace />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    const editButton = await screen.findByRole('button', { name: /edit routine details/i });
+    const actionRow = editButton.parentElement;
+
+    expect(actionRow).not.toBeNull();
+    expect(actionRow?.className).toContain('w-full');
+    expect(actionRow?.className).toContain('sm:w-auto');
+  });
 });

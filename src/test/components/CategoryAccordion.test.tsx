@@ -23,4 +23,24 @@ describe('CategoryAccordion', () => {
     fireEvent.click(screen.getByRole('button', { name: /Second/i }));
     expect(screen.getByText('Second content')).toBeInTheDocument();
   });
+
+  it('uses a wrapping action row so category controls can move below long titles on mobile', () => {
+    renderWithProviders(
+      <CategoryAccordion
+        categoryId="category-1"
+        title="A very long category title that should still keep controls visible"
+        onRenameCategory={async () => {}}
+        onDeleteCategory={async () => {}}
+      >
+        <div>Category content</div>
+      </CategoryAccordion>,
+    );
+
+    const editButton = screen.getByRole('button', { name: 'Edit' });
+    const actionRow = editButton.parentElement;
+
+    expect(actionRow).not.toBeNull();
+    expect(actionRow?.className).toContain('w-full');
+    expect(actionRow?.className).toContain('sm:w-auto');
+  });
 });

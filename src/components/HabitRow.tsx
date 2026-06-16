@@ -159,7 +159,7 @@ export function HabitRow({
   return (
     <div className="rounded-2xl border border-black/5 bg-paper px-4 py-3">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div>
+        <div className="min-w-0">
           {isEditingTitle ? (
             <div className="flex items-center gap-2">
               <input
@@ -183,8 +183,8 @@ export function HabitRow({
               </button>
             </div>
           ) : (
-            <div className="flex items-center gap-2">
-              <p className={`font-medium ${completed ? 'line-through opacity-70' : ''}`}>{habitTitle}</p>
+            <div className="flex flex-wrap items-center gap-2">
+              <p className={`min-w-0 break-words font-medium ${completed ? 'line-through opacity-70' : ''}`}>{habitTitle}</p>
               {onRenameHabit ? (
                 <button type="button" onClick={() => setIsEditingTitle(true)} className="rounded-full bg-black/5 px-2 py-1 text-xs font-medium">
                   Edit
