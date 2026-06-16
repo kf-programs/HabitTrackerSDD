@@ -36,7 +36,6 @@ export function AllRoutinesView({ routines }: AllRoutinesViewProps) {
           <div className="flex items-center justify-between gap-3">
             <div>
               <h2 className="text-lg font-semibold">Active routines</h2>
-              <p className="text-sm text-ink/60">Currently available and shown first.</p>
             </div>
             <span className="rounded-full bg-sage px-3 py-1 text-xs font-medium">{activeRoutines.length}</span>
           </div>
@@ -77,7 +76,6 @@ export function AllRoutinesView({ routines }: AllRoutinesViewProps) {
           <div className="flex items-center justify-between gap-3">
             <div>
               <h2 className="text-lg font-semibold">Paused routines</h2>
-              <p className="text-sm text-ink/60">Softened to signal they are on hold.</p>
             </div>
             <span className="rounded-full bg-blush px-3 py-1 text-xs font-medium">{pausedRoutines.length}</span>
           </div>

@@ -64,4 +64,11 @@ describe('BottomNavBar', () => {
     expect(homeLink).not.toHaveClass('bg-ink text-paper');
     expect(routinesLink).not.toHaveClass('bg-ink text-paper');
   });
+
+  it('renders the made-by external link', () => {
+    renderWithRouter(['/']);
+
+    const madeByLink = screen.getByRole('link', { name: 'Made by kfranz solutions' });
+    expect(madeByLink).toHaveAttribute('href', 'https://kfranzsolutions.com');
+  });
 });

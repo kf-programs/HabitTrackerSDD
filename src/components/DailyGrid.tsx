@@ -70,7 +70,7 @@ export function DailyGrid({ dailyTiles, weeklyTiles, startLabel, endLabel, selec
       <div className="grid grid-cols-[auto_auto_1fr] items-start gap-2">
         {/* Adjusted padding/height on the side label to match the new dynamic grid height */}
         <div 
-          className="flex items-center justify-center px-1 text-[10px] font-medium uppercase tracking-[0.2em] text-ink/45 [writing-mode:vertical-rl]"
+          className="flex items-center justify-center md:px-1 text-[10px] font-medium uppercase tracking-[0.2em] text-ink/45 [writing-mode:vertical-rl]"
           style={{ height: `calc((${TILE_SIZE} * 8) + (0.5rem * 7))` }} // matches 8 rows + gaps
         >
           Days

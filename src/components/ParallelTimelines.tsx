@@ -61,7 +61,12 @@ export function ParallelTimelines({ routineId, selectedDayKey, onSelectedDayKeyC
   const canGoForward = compareDayKeys(selectedDayKey, todayKey) < 0;
 
   return (
-    <section className="max-w-xl mx-auto space-y-4 rounded-3xl bg-white/80 p-5 shadow-soft">
+    <section className="max-w-xl mx-auto px-1 sm:p-5 space-y-4 rounded-3xl bg-white/80 p-5 shadow-soft">
+      <p className="text-center text-sm text-ink/65">
+        Completing any one of your habits colors a tile.
+      <br/>
+        Grace over pressure. Balance over stress.
+      </p>
       <div className="flex items-center justify-between rounded-2xl bg-black/5 px-3 py-2 text-sm">
         <button
           type="button"
@@ -70,7 +75,7 @@ export function ParallelTimelines({ routineId, selectedDayKey, onSelectedDayKeyC
           onClick={() => onSelectedDayKeyChange(shiftDayKey(selectedDayKey, -1))}
           className="rounded-full bg-white px-3 py-1 disabled:cursor-not-allowed disabled:opacity-40"
         >
-          Prev
+          -
         </button>
         <label className="flex items-center gap-2 text-xs font-medium text-ink/65" htmlFor="timeline-day-picker">
           Date
@@ -108,7 +113,7 @@ export function ParallelTimelines({ routineId, selectedDayKey, onSelectedDayKeyC
             onClick={() => onSelectedDayKeyChange(shiftDayKey(selectedDayKey, 1))}
             className="rounded-full bg-white px-3 py-1 disabled:cursor-not-allowed disabled:opacity-40"
           >
-            Next
+            +
           </button>
         </div>
       </div>
@@ -124,7 +129,7 @@ export function ParallelTimelines({ routineId, selectedDayKey, onSelectedDayKeyC
           selectedDayKey={selectedDayKey}
         />
       ) : null}
-      <p className="rounded-2xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-900/80">
+      <p className="text-center rounded-2xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-900/80">
         Your habit data is private and stored only on this device. Clearing browser storage, reinstalling the app, or using a different browser/device can permanently remove your history.
       </p>
     </section>

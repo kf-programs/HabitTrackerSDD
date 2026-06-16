@@ -1,6 +1,7 @@
 import { NavLink, matchPath, useLocation } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { getRoutineById } from '../repositories/routinesRepository';
+import kfranzFavi from '../assets/kfranzFavi.png';
 
 const linkClass = ({ isActive }: { isActive: boolean }) =>
   [
@@ -32,6 +33,16 @@ export function BottomNavBar() {
             {routine.title}
           </NavLink>
         ) : null}
+        <a
+          href="https://kfranzsolutions.com"
+          target="_blank"
+          rel="noreferrer"
+          className="ml-auto flex items-center gap-2 rounded-full px-3 py-2 text-sm font-medium text-ink/70 transition-colors hover:bg-black/5"
+          aria-label="Made by kfranz solutions"
+        >
+          <span className="hidden sm:inline">Made by:</span>
+          <img src={kfranzFavi} alt="kfranz solutions" className="h-5 w-5 rounded" />
+        </a>
       </div>
     </nav>
   );

@@ -21,7 +21,7 @@ export function DashboardView({ routines }: DashboardViewProps) {
 
   return (
     <section className="space-y-6">
-      <header className="md:mt-40 text-center">
+      <header className="md:mt-32 text-center">
         <h1 className="mt-3 text-3xl font-semibold tracking-tight">{greeting}</h1>
         <p className="mt-3 text-sm leading-6 text-ink/70">
           A calm place to return to your routines without streak anxiety or noise.
