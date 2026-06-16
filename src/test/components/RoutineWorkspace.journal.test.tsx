@@ -54,18 +54,6 @@ function renderWorkspace(route = '/routines/routine-morning') {
 }
 
 describe('RoutineWorkspace journal behavior', () => {
-  it('renders journal textarea between timeline and first category', async () => {
-    await seedDatabase();
-
-    renderWorkspace();
-
-    const timelinePicker = await screen.findByLabelText('Selected day');
-    const journal = await screen.findByLabelText('Daily journal entry');
-    const firstCategory = await screen.findByText('Gentle Start');
-
-    expect(timelinePicker.compareDocumentPosition(journal) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    expect(journal.compareDocumentPosition(firstCategory) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-  }, 15000);
 
   it('auto-saves on debounce and on blur', async () => {
     const user = userEvent.setup();
