@@ -24,7 +24,13 @@ export function DashboardView({ routines }: DashboardViewProps) {
       <header className="md:mt-40 text-center">
         <h1 className="mt-3 text-3xl font-semibold tracking-tight">{greeting}</h1>
         <p className="mt-3 text-sm leading-6 text-ink/70">
-          A calm place to return to your routines without streak pressure or noise.
+          A calm place to return to your routines without streak anxiety or noise.
+        </p>
+        <p className="mt-3 text-sm leading-6 text-ink/70">
+          Create routines, customize habits that work for you, and share with others who could benefit as well. 
+        </p>
+        <p className="mt-3 text-sm leading-6 text-ink/70">
+          No accounts. No pressure. No competition. Just your routines, your way. 
         </p>
       </header>
 

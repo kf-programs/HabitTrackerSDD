@@ -4,36 +4,40 @@ import { isOfflineStartup, registerServiceWorker } from '../../services/offlineC
 describe('offlineCache service', () => {
   it('registers service worker when available', async () => {
     const update = vi.fn().mockResolvedValue(undefined);
-    const register = vi.fn().mockResolvedValue({
-      update,
-      waiting: null,
-      addEventListener: vi.fn(),
-      installing: null,
+    const registerSWMock = vi.fn();
+
+    registerSWMock.mockImplementation((options: { onRegisteredSW?: (swScriptUrl: string, registration: ServiceWorkerRegistration) => void }) => {
+      options.onRegisteredSW?.('/sw.js', { update } as unknown as ServiceWorkerRegistration);
+      return vi.fn().mockResolvedValue(undefined);
     });
+
     Object.defineProperty(navigator, 'serviceWorker', {
-      value: {
-        register,
-        addEventListener: vi.fn(),
-        controller: null,
-      },
+      value: {},
       configurable: true,
     });
 
-    const result = await registerServiceWorker('/sw.js');
+    vi.spyOn(window, 'setInterval').mockReturnValue(1 as unknown as ReturnType<typeof setInterval>);
+
+    const result = await registerServiceWorker(registerSWMock);
 
     expect(result).toBe(true);
-    expect(register).toHaveBeenCalledWith('/sw.js');
+    expect(registerSWMock).toHaveBeenCalledTimes(1);
     expect(update).toHaveBeenCalledTimes(1);
   });
 
   it('returns false when registration fails', async () => {
-    const register = vi.fn().mockRejectedValue(new Error('failed'));
+    const registerSWMock = vi.fn();
+
+    registerSWMock.mockImplementation(() => {
+      throw new Error('failed');
+    });
+
     Object.defineProperty(navigator, 'serviceWorker', {
-      value: { register },
+      value: {},
       configurable: true,
     });
 
-    const result = await registerServiceWorker('/sw.js');
+    const result = await registerServiceWorker(registerSWMock);
 
     expect(result).toBe(false);
   });
