@@ -67,7 +67,7 @@ export function DailyGrid({ dailyTiles, weeklyTiles, startLabel, endLabel, selec
 
   return (
     <section className="space-y-2">
-      <div className="grid grid-cols-[auto_auto_1fr] items-start gap-2">
+      <div className="grid grid-cols-[auto_auto_1fr] items-start gap-0.5 sm:gap-2">
         {/* Adjusted padding/height on the side label to match the new dynamic grid height */}
         <div 
           className="flex items-center justify-center md:px-1 text-[10px] font-medium uppercase tracking-[0.2em] text-ink/45 [writing-mode:vertical-rl]"
