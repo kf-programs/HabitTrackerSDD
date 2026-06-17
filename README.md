@@ -1,7 +1,8 @@
 # Mindful Routine Tracker
 
-A privacy-first, offline-capable mindful routine tracker built with TypeScript, React, Vite, and IndexedDB (Dexie).
+A privacy-first, collaborative mindful routine tracker built with TypeScript, React, Vite, and IndexedDB (Dexie).
 Created using Spec Driven Development facilitated by GitHub SpecKit agentic workflows.
+https://habittracker.kfranzsolutions.com/
 
 ## Stack
 - TypeScript + React 18 + Vite 5
