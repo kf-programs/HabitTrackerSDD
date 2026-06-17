@@ -1,6 +1,7 @@
 # Mindful Routine Tracker
 
 A privacy-first, offline-capable mindful routine tracker built with TypeScript, React, Vite, and IndexedDB (Dexie).
+Created using Spec Driven Development facilitated by GitHub SpecKit agentic workflows.
 
 ## Stack
 - TypeScript + React 18 + Vite 5
@@ -25,7 +26,6 @@ A privacy-first, offline-capable mindful routine tracker built with TypeScript, 
 - Create routines with categories and habits (yes/no, counter, measurement)
 - Track daily and weekly progress with timeline visuals
 - Export and import structure-only routine links
-- Use offline mode with local persistence and installable PWA support
 
 ## Quality Gate
 Run before integration:
